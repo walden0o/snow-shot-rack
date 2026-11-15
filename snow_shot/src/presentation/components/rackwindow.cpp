@@ -258,9 +258,11 @@ bool RackWindow::interacting() const {
 
 QRect RackWindow::targetGeometry(bool expanded) const {
     const QRect screen = m_screen ? m_screen->geometry() : QRect(0, 0, 1024, 768);
+    // Keep the rack below the macOS menu bar so the collapsed handle stays visible.
+    const int top = m_screen ? m_screen->availableGeometry().top() : screen.top();
     const int width = std::min(660, screen.width() - 24);
-    return expanded ? QRect(screen.right() - width - 12, screen.top(), width, 260)
-                    : QRect(screen.right() - 156, screen.top(), 112, 8);
+    return expanded ? QRect(screen.right() - width - 12, top, width, 260)
+                    : QRect(screen.right() - 156, top, 112, 8);
 }
 
 void RackWindow::animate(bool expanded) {
@@ -287,7 +289,7 @@ void RackWindow::trackPointer() {
     if (!m_expanded && m_mode == QStringLiteral("hover")) {
         QScreen* screen = QGuiApplication::screenAt(cursor);
         if (screen && cursor.y() >= screen->geometry().top() &&
-            cursor.y() <= screen->geometry().top() + 5 &&
+            cursor.y() <= screen->availableGeometry().top() + 8 &&
             cursor.x() >= screen->geometry().right() - 180 &&
             cursor.x() <= screen->geometry().right() - 20) {
             m_screen = screen;
