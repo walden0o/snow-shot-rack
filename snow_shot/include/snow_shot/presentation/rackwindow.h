@@ -60,6 +60,7 @@ class RackWindow final : public QWidget {
     void openEntry(const RackEntry& entry);
     [[nodiscard]] QString exportEntry(const RackEntry& entry);
     [[nodiscard]] QRect targetGeometry(bool expanded) const;
+    [[nodiscard]] bool pointerInHoverArea(const QPoint& cursor) const;
     [[nodiscard]] std::optional<RackEntry> entry(const QString& id) const;
     [[nodiscard]] RackContentModel& currentModel() const;
 

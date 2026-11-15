@@ -136,7 +136,7 @@ RackWindow::RackWindow(RackContentModel& model, RackContentModel& clipboardModel
     m_closeTimer.setSingleShot(true);
     m_closeTimer.setInterval(200);
     connect(&m_closeTimer, &QTimer::timeout, this, [this] {
-        if (!interacting() && !geometry().contains(QCursor::pos()))
+        if (!interacting() && !pointerInHoverArea(QCursor::pos()))
             collapse();
     });
     m_pointerTimer.setInterval(50);
@@ -265,6 +265,14 @@ QRect RackWindow::targetGeometry(bool expanded) const {
                     : QRect(screen.right() - 156, top, 112, 8);
 }
 
+bool RackWindow::pointerInHoverArea(const QPoint& cursor) const {
+    // Include the menu bar band above the rack so resting on the top edge keeps it open.
+    QRect area = geometry();
+    if (m_screen)
+        area.setTop(m_screen->geometry().top());
+    return area.contains(cursor);
+}
+
 void RackWindow::animate(bool expanded) {
     const QRect target = targetGeometry(expanded);
     if (m_expanded == expanded &&
@@ -297,7 +305,7 @@ void RackWindow::trackPointer() {
         }
     }
     if (m_expanded && m_mode == QStringLiteral("hover")) {
-        if (geometry().contains(cursor) || interacting())
+        if (pointerInHoverArea(cursor) || interacting())
             m_closeTimer.stop();
         else if (!m_closeTimer.isActive())
             m_closeTimer.start();
