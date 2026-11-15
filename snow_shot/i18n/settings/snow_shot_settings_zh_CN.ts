@@ -1530,6 +1530,10 @@
             <translation>83</translation>
         </message>
         <message>
+            <source>A temporary shelf for screenshots</source>
+            <translation>截图的临时暂存架</translation>
+        </message>
+        <message>
             <source>API URL</source>
             <translation>API URL</translation>
         </message>
@@ -1584,6 +1588,14 @@
         <message>
             <source>Add edit with Snow Shot to the Windows context menu to pin a supported image or document file to the screen</source>
             <translation>将“使用 Snow Shot 编辑”添加到 Windows 右键菜单，以将支持的图像或文档文件固定到屏幕</translation>
+        </message>
+        <message>
+            <source>Add screenshots automatically</source>
+            <translation>自动挂入截图</translation>
+        </message>
+        <message>
+            <source>Add screenshots to Rack when they are saved to capture history</source>
+            <translation>截图保存到历史记录时自动挂入晾衣架</translation>
         </message>
         <message>
             <source>Adjust MP4 quality and file size</source>
@@ -1652,6 +1664,10 @@
         <message>
             <source>Always show</source>
             <translation>始终显示</translation>
+        </message>
+        <message>
+            <source>Always visible</source>
+            <translation>常驻显示</translation>
         </message>
         <message>
             <source>Angle annotation</source>
@@ -2038,6 +2054,10 @@
             <translation>选择自动选取窗口或窗口子元素，或手动选择</translation>
         </message>
         <message>
+            <source>Choose how Rack opens and closes</source>
+            <translation>选择晾衣架的展开与收起方式</translation>
+        </message>
+        <message>
             <source>Choose how much execution time the application receives</source>
             <translation>选择应用程序获得的执行时间</translation>
         </message>
@@ -2252,6 +2272,10 @@
         <message>
             <source>Clipboard content</source>
             <translation>剪贴板内容</translation>
+        </message>
+        <message>
+            <source>Clipboard history</source>
+            <translation>剪贴板历史</translation>
         </message>
         <message>
             <source>Close</source>
@@ -2670,6 +2694,10 @@
             <translation>磁盘用量</translation>
         </message>
         <message>
+            <source>Display mode</source>
+            <translation>显示模式</translation>
+        </message>
+        <message>
             <source>Display the original image beside recognition and translation results</source>
             <translation>在识别和翻译结果旁显示原始图像</translation>
         </message>
@@ -2758,6 +2786,10 @@
             <translation>启用 MCP 集成</translation>
         </message>
         <message>
+            <source>Enable Rack</source>
+            <translation>启用晾衣架</translation>
+        </message>
+        <message>
             <source>Enable annotation mode when opening for editing</source>
             <translation>打开编辑时启用标注模式</translation>
         </message>
@@ -2828,6 +2860,10 @@
         <message>
             <source>Exit annotation mode before closing</source>
             <translation>关闭前退出标注模式</translation>
+        </message>
+        <message>
+            <source>Expand or collapse the screenshot Rack</source>
+            <translation>展开或收起截图晾衣架</translation>
         </message>
         <message>
             <source>Export</source>
@@ -3082,6 +3118,18 @@
             <translation>高亮颜色预设</translation>
         </message>
         <message>
+            <source>History size</source>
+            <translation>历史记录条数</translation>
+        </message>
+        <message>
+            <source>Hotkey toggle</source>
+            <translation>快捷键切换</translation>
+        </message>
+        <message>
+            <source>Hover to expand</source>
+            <translation>悬停展开</translation>
+        </message>
+        <message>
             <source>Icon</source>
             <translation>图标</translation>
         </message>
@@ -3206,6 +3254,10 @@
             <translation>保留已关闭窗口以便恢复；禁用不会删除现有记录</translation>
         </message>
         <message>
+            <source>Keep copied text and images in memory for this session only. Concealed content such as passwords is skipped</source>
+            <translation>仅在本次会话的内存中保存复制的文本和图像。密码等隐藏内容会被跳过</translation>
+        </message>
+        <message>
             <source>Keep group main buttons visible</source>
             <translation>保持显示分组主按钮</translation>
         </message>
@@ -3216,6 +3268,10 @@
         <message>
             <source>Keep screenshot annotations editable with undo and redo history. Pinned images retain the original layout without layout compaction</source>
             <translation>保留截图标注的可编辑状态及撤销、重做历史。固定的图像保留原始布局，不使用紧凑布局</translation>
+        </message>
+        <message>
+            <source>Keep screenshots at the top edge of the screen</source>
+            <translation>将截图暂存在屏幕顶部边缘</translation>
         </message>
         <message>
             <source>Keep screenshots available after the application closes</source>
@@ -3578,6 +3634,14 @@
             <translation>关闭</translation>
         </message>
         <message>
+            <source>Off by default; never written to disk</source>
+            <translation>默认关闭；从不写入磁盘</translation>
+        </message>
+        <message>
+            <source>Older screenshots leave Rack when it is full</source>
+            <translation>晾衣架已满时移除较早的截图</translation>
+        </message>
+        <message>
             <source>Only when displayed</source>
             <translation>仅在显示时</translation>
         </message>
@@ -3620,6 +3684,10 @@
         <message>
             <source>Open selected text translation in a standalone window</source>
             <translation>在独立窗口中翻译选中的文本</translation>
+        </message>
+        <message>
+            <source>Open the clipboard history in Rack</source>
+            <translation>在晾衣架中打开剪贴板历史</translation>
         </message>
         <message>
             <source>Open the folder where recorded videos are saved</source>
@@ -3898,6 +3966,14 @@
             <translation>快速修改选区</translation>
         </message>
         <message>
+            <source>Rack</source>
+            <translation>晾衣架</translation>
+        </message>
+        <message>
+            <source>Rack capacity</source>
+            <translation>晾衣架容量</translation>
+        </message>
+        <message>
             <source>Rapidly drag a pinned window back and forth to show hidden pinned windows in the current group, or hide the other pinned windows when none are hidden</source>
             <translation>快速来回拖动固定到屏幕的窗口，以显示当前分组中已隐藏的固定到屏幕窗口；如果没有隐藏的窗口，则隐藏其他固定到屏幕窗口</translation>
         </message>
@@ -3944,6 +4020,10 @@
         <message>
             <source>Recognized text and language tools</source>
             <translation>识别文本与语言工具</translation>
+        </message>
+        <message>
+            <source>Record clipboard history</source>
+            <translation>记录剪贴板历史</translation>
         </message>
         <message>
             <source>Record screen</source>
@@ -4342,6 +4422,10 @@
             <translation>滚动截图</translation>
         </message>
         <message>
+            <source>Search and clear history from the Clipboard tab in Rack</source>
+            <translation>在晾衣架的剪贴板标签页中搜索和清空历史</translation>
+        </message>
+        <message>
             <source>Secondary target language</source>
             <translation>次要目标语言</translation>
         </message>
@@ -4580,6 +4664,10 @@
         <message>
             <source>Show border by default</source>
             <translation>默认显示边框</translation>
+        </message>
+        <message>
+            <source>Show clipboard history</source>
+            <translation>显示剪贴板历史</translation>
         </message>
         <message>
             <source>Show cursor</source>
@@ -4980,6 +5068,10 @@
         <message>
             <source>Thumbnail mode</source>
             <translation>缩略图模式</translation>
+        </message>
+        <message>
+            <source>Toggle Rack</source>
+            <translation>切换晾衣架</translation>
         </message>
         <message>
             <source>Toggle always on top for the window under the cursor</source>

@@ -26,6 +26,11 @@ void configureScreenshotToolbarWindow(QWidget* widget);
 // Desktop tools receive content drags; an explicitly visible capture tool must
 // temporarily stay above its capture overlay instead.
 void configureFloatingToolbarWindow(QWidget* widget, bool captureActive = false);
+void configureRackWindow(QWidget* widget);
+// The general pasteboard change counter detects copies made while the app is inactive.
+qint64 clipboardChangeCount();
+// True for content that clipboard managers should not record, such as passwords.
+bool clipboardContentConcealed();
 quint32 screenshotDisplayAtCursor();
 quint32 screenshotFocusedWindow();
 QRectF screenshotFocusedWindowBounds();

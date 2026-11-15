@@ -54,6 +54,7 @@
 #include "snow_shot/presentation/systemtraycontroller.h"
 #include "snow_shot/presentation/systemnotificationfeedback.h"
 #include "snow_shot/presentation/floatingtoolbarcontroller.h"
+#include "snow_shot/presentation/rackcontroller.h"
 #include "snow_shot/app/mcp/mcpruntimelifecycle.h"
 #include "snow_shot/app/mcp/mcpruntimegraph.h"
 #include "snow_shot/app/operationadmission.h"
@@ -696,6 +697,7 @@ class ApplicationController::Impl {
         if (memoryOptimization)
             memoryOptimization->stop();
         floatingToolbar.shutdown();
+        rack.shutdown();
         mcpGraph.stop();
         platform::windows::setAdministratorRestartGuard({});
         storage::ApplicationStorage::instance().setDirectoryChangeHooks({}, {});
@@ -1301,6 +1303,11 @@ class ApplicationController::Impl {
 #endif
         systemTray.show();
         globalShortcutManager.initialize();
+        QObject::connect(&rack, &presentation::RackController::settingsRequested, &q, [this] {
+            ensureMainWindow().showSettingsLocation(QStringLiteral("desktop-tools"),
+                                                    QStringLiteral("rack"));
+        });
+        rack.start();
         globalMouseManager.setCaptureAvailable(ensureScreenshotController()->captureAvailable());
         globalMouseManager.initialize();
         QObject::connect(&app, &QGuiApplication::applicationStateChanged, &globalMouseManager,
@@ -1355,6 +1362,9 @@ class ApplicationController::Impl {
             QObject::connect(screenshotController.get(),
                              &ScreenshotController::captureActivityChanged, &floatingToolbar,
                              &presentation::FloatingToolbarController::setCaptureActive);
+            QObject::connect(screenshotController.get(),
+                             &ScreenshotController::captureActivityChanged, &rack,
+                             &presentation::RackController::setCaptureActive);
 #ifdef Q_OS_MACOS
             screenshotController->setRecordingPermissionCheck([this](bool microphone, bool input,
                                                                      bool notify) {
@@ -1778,6 +1788,12 @@ class ApplicationController::Impl {
         case presentation::GlobalShortcutAction::OpenCaptureHistory:
             ensureMainWindow().showScreenshotHistory();
             break;
+        case presentation::GlobalShortcutAction::ToggleRack:
+            rack.toggle();
+            break;
+        case presentation::GlobalShortcutAction::ToggleClipboardHistory:
+            rack.showClipboardHistory();
+            break;
         case presentation::GlobalShortcutAction::GlobalCanvas:
             if (!globalCanvasController) {
                 globalCanvasController = std::make_unique<presentation::GlobalCanvasController>();
@@ -1978,6 +1994,9 @@ class ApplicationController::Impl {
                              &floatingToolbar,
                              &presentation::FloatingToolbarController::setCaptureActive);
             QObject::connect(directCaptureController.get(),
+                             &presentation::DirectCaptureController::captureActivityChanged, &rack,
+                             &presentation::RackController::setCaptureActive);
+            QObject::connect(directCaptureController.get(),
                              &presentation::DirectCaptureController::operationFailed, &q,
                              [this](const QString& message, bool warning) {
                                  systemTray.showCaptureMessage(message, warning);
@@ -2047,6 +2066,7 @@ class ApplicationController::Impl {
     presentation::PinnedWindowGroupManager groupManager;
     presentation::SystemTrayController systemTray;
     presentation::FloatingToolbarController floatingToolbar;
+    presentation::RackController rack;
     ApplicationActionGate actionGate{[this, lifetime = QPointer<ApplicationController>(&q)] {
         return lifetime && actionsAvailable();
     }};

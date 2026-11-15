@@ -23,7 +23,7 @@ namespace {
 constexpr int MAX_SHORTCUTS_PER_ACTION = 2;
 constexpr int FIRST_REGISTRATION_ID = 0x2200;
 constexpr int LAST_REGISTRATION_ID = 0xBFFF;
-constexpr std::size_t ACTION_COUNT = 32;
+constexpr std::size_t ACTION_COUNT = 34;
 
 constexpr std::array<GlobalShortcutAction, ACTION_COUNT> ALL_ACTIONS = {
     GlobalShortcutAction::Screenshot,
@@ -58,6 +58,8 @@ constexpr std::array<GlobalShortcutAction, ACTION_COUNT> ALL_ACTIONS = {
     GlobalShortcutAction::ToggleGlobalShortcuts,
     GlobalShortcutAction::ToggleGlobalMouse,
     GlobalShortcutAction::ToggleDisableOnFocusedFullscreenWindow,
+    GlobalShortcutAction::ToggleRack,
+    GlobalShortcutAction::ToggleClipboardHistory,
 };
 
 std::size_t actionIndex(GlobalShortcutAction action) {
@@ -137,6 +139,10 @@ GlobalShortcutStatus aggregateStatus(const QVector<GlobalShortcutBindingResult>&
 shortcuts::ShortcutBindingList persistedShortcuts(const storage::ShortcutSettings& settings,
                                                   GlobalShortcutAction action) {
     switch (action) {
+    case GlobalShortcutAction::ToggleRack:
+        return settings.toggleRack();
+    case GlobalShortcutAction::ToggleClipboardHistory:
+        return settings.toggleClipboardHistory();
     case GlobalShortcutAction::Screenshot:
         return settings.screenshot();
     case GlobalShortcutAction::ScreenshotDelay:
@@ -216,6 +222,10 @@ shortcuts::ShortcutBindingList persistedShortcuts(const storage::ShortcutSetting
 bool persistShortcuts(const storage::ShortcutSettings& settings, GlobalShortcutAction action,
                       const shortcuts::ShortcutBindingList& bindings) {
     switch (action) {
+    case GlobalShortcutAction::ToggleRack:
+        return settings.setToggleRack(bindings);
+    case GlobalShortcutAction::ToggleClipboardHistory:
+        return settings.setToggleClipboardHistory(bindings);
     case GlobalShortcutAction::Screenshot:
         return settings.setScreenshot(bindings);
     case GlobalShortcutAction::ScreenshotDelay:

@@ -285,6 +285,96 @@ SettingsItemDefinition switchWindowGroupItem() {
     return item;
 }
 
+SettingsItemDefinition toggleRackItem() {
+    return quickActionItem(
+        QStringLiteral("quick.toggle-rack"), QT_TRANSLATE_NOOP("SettingsCatalog", "Toggle Rack"),
+        QT_TRANSLATE_NOOP("SettingsCatalog", "Expand or collapse the screenshot Rack"), {},
+        GlobalShortcutAction::ToggleRack, QStringLiteral("global_shortcuts/toggle_rack"),
+        []() { return outlined_icons::History(); });
+}
+
+SettingsItemDefinition toggleClipboardHistoryItem() {
+    return quickActionItem(
+        QStringLiteral("quick.toggle-clipboard-history"),
+        QT_TRANSLATE_NOOP("SettingsCatalog", "Show clipboard history"),
+        QT_TRANSLATE_NOOP("SettingsCatalog", "Open the clipboard history in Rack"), {},
+        GlobalShortcutAction::ToggleClipboardHistory,
+        QStringLiteral("global_shortcuts/toggle_clipboard_history"),
+        []() { return outlined_icons::History(); });
+}
+
+SettingsOptionDefinition rackOption(const char* value) {
+    return {QString::fromLatin1(value), settingsText(value)};
+}
+
+QVector<SettingsItemDefinition> rackItems() {
+    SettingsSelectDefinition mode;
+    mode.binding = SettingsSelectBinding::RackDisplayMode;
+    mode.options = {
+        {QStringLiteral("hover"),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Hover to expand"))},
+        {QStringLiteral("hotkey"),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Hotkey toggle"))},
+        {QStringLiteral("always"),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Always visible"))},
+    };
+    SettingsSelectDefinition limit;
+    limit.binding = SettingsSelectBinding::RackLimit;
+    limit.options = {rackOption("12"), rackOption("24"), rackOption("48")};
+    return {
+        {QStringLiteral("rack.enabled"),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Enable Rack")),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog",
+                                        "Keep screenshots at the top edge of the screen")),
+         {},
+         QStringLiteral("rack/enabled"),
+         SettingsSwitchDefinition{SettingsSwitchBinding::RackEnabled}},
+        {QStringLiteral("rack.auto-add"),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Add screenshots automatically")),
+         settingsText(QT_TRANSLATE_NOOP(
+             "SettingsCatalog", "Add screenshots to Rack when they are saved to capture history")),
+         {},
+         QStringLiteral("rack/auto_add_screenshots"),
+         SettingsSwitchDefinition{SettingsSwitchBinding::RackAutoAddScreenshots}},
+        {QStringLiteral("rack.display-mode"),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Display mode")),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Choose how Rack opens and closes")),
+         {},
+         QStringLiteral("rack/display_mode"),
+         mode},
+        {QStringLiteral("rack.limit"),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Rack capacity")),
+         settingsText(
+             QT_TRANSLATE_NOOP("SettingsCatalog", "Older screenshots leave Rack when it is full")),
+         {},
+         QStringLiteral("rack/limit"),
+         limit},
+    };
+}
+
+QVector<SettingsItemDefinition> clipboardHistoryItems() {
+    SettingsSelectDefinition limit;
+    limit.binding = SettingsSelectBinding::ClipboardHistoryLimit;
+    limit.options = {rackOption("20"), rackOption("50"), rackOption("100"), rackOption("200")};
+    return {
+        {QStringLiteral("clipboard-history.enabled"),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Record clipboard history")),
+         settingsText(QT_TRANSLATE_NOOP(
+             "SettingsCatalog", "Keep copied text and images in memory for this session only. "
+                                "Concealed content such as passwords is skipped")),
+         {},
+         QStringLiteral("clipboard_history/enabled"),
+         SettingsSwitchDefinition{SettingsSwitchBinding::ClipboardHistoryEnabled}},
+        {QStringLiteral("clipboard-history.limit"),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "History size")),
+         settingsText(QT_TRANSLATE_NOOP("SettingsCatalog",
+                                        "Search and clear history from the Clipboard tab in Rack")),
+         {},
+         QStringLiteral("clipboard_history/limit"),
+         limit},
+    };
+}
+
 SettingsItemDefinition openPinToScreenManagementItem() {
     return quickActionItem(
         QStringLiteral("quick.open-pin-to-screen-management"),
@@ -4015,6 +4105,8 @@ constexpr CatalogItemFactory catalogPageGlobalHotkeysSectionOtherItems[] = {
     {toggleGlobalShortcutsItem},
     {toggleGlobalMouseItem},
     {toggleDisableOnFocusedFullscreenWindowItem},
+    {toggleRackItem},
+    {toggleClipboardHistoryItem},
 };
 
 constexpr CatalogItemFactory catalogPageGlobalHotkeysSectionGlobalHotkeysItems[] = {
@@ -4855,11 +4947,33 @@ constexpr CatalogItemFactory catalogPageDesktopToolsSectionFloatingToolbarItems[
 
 constexpr CatalogSectionRecord catalogPageDesktopToolsSections[] = {
     {
+        .id = u"rack",
+        .title = settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Rack")),
+        .description =
+            settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "A temporary shelf for screenshots")),
+        .reset = SettingsSectionReset::None,
+        .items = {},
+        .factory = rackItems,
+        .layout = SettingsSectionItemLayout::VerticalList,
+        .collapsed = false,
+    },
+    {
+        .id = u"clipboard-history",
+        .title = settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Clipboard history")),
+        .description = settingsText(
+            QT_TRANSLATE_NOOP("SettingsCatalog", "Off by default; never written to disk")),
+        .reset = SettingsSectionReset::None,
+        .items = {},
+        .factory = clipboardHistoryItems,
+        .layout = SettingsSectionItemLayout::VerticalList,
+        .collapsed = false,
+    },
+    {
         .id = u"tray",
         .title = settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Tray")),
         .description = settingsText(
             QT_TRANSLATE_NOOP("SettingsCatalog", "System tray icon, actions and menu")),
-        .reset = SettingsSectionReset ::Tray,
+        .reset = SettingsSectionReset::Tray,
         .items = catalogPageDesktopToolsSectionTrayItems,
         .factory = nullptr,
         .layout = SettingsSectionItemLayout::VerticalList,
@@ -4870,7 +4984,7 @@ constexpr CatalogSectionRecord catalogPageDesktopToolsSections[] = {
         .title = settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Floating toolbar")),
         .description =
             settingsText(QT_TRANSLATE_NOOP("SettingsCatalog", "Customize floating toolbar tools")),
-        .reset = SettingsSectionReset ::FloatingToolbar,
+        .reset = SettingsSectionReset::FloatingToolbar,
         .items = catalogPageDesktopToolsSectionFloatingToolbarItems,
         .factory = nullptr,
         .layout = SettingsSectionItemLayout::VerticalList,
@@ -5527,6 +5641,10 @@ void validateIndexKeyComponent(QStringList* errors, const QString& value, const 
 
 QString shortcutConfigurationKey(GlobalShortcutAction action) {
     switch (action) {
+    case GlobalShortcutAction::ToggleRack:
+        return QStringLiteral("global_shortcuts/toggle_rack");
+    case GlobalShortcutAction::ToggleClipboardHistory:
+        return QStringLiteral("global_shortcuts/toggle_clipboard_history");
     case GlobalShortcutAction::Screenshot:
         return QStringLiteral("global_shortcuts/screenshot");
     case GlobalShortcutAction::ScreenshotDelay:
@@ -6014,7 +6132,14 @@ TrayCommandManifest buildBuiltInTrayCommandManifest() {
               QT_TRANSLATE_NOOP("SettingsCatalog", "Automatic disabling in fullscreen windows"),
               GlobalShortcutAction::ToggleDisableOnFocusedFullscreenWindow,
               []() { return custom_outlined_icons::ScreenshotFullScreen(); },
-              SettingsShortcutAdjustment::None, true)}},
+              SettingsShortcutAdjustment::None, true),
+          quick(QStringLiteral("quick.toggle-rack"),
+                QT_TRANSLATE_NOOP("SettingsCatalog", "Toggle Rack"),
+                GlobalShortcutAction::ToggleRack, []() { return outlined_icons::History(); }),
+          quick(QStringLiteral("quick.toggle-clipboard-history"),
+                QT_TRANSLATE_NOOP("SettingsCatalog", "Show clipboard history"),
+                GlobalShortcutAction::ToggleClipboardHistory,
+                []() { return outlined_icons::History(); })}},
         {QStringLiteral("system"),
          {{QStringLiteral("tray.window-grouping"),
            {"SettingsCatalog", QT_TRANSLATE_NOOP("SettingsCatalog", "Window grouping")},
@@ -6189,6 +6314,15 @@ QStringList SettingsCatalog::validationErrors() const {
                     QString expectedKey;
                     SettingsSelectSource expectedSource = SettingsSelectSource::Fixed;
                     switch (select->binding) {
+                    case SettingsSelectBinding::RackDisplayMode:
+                        expectedKey = QStringLiteral("rack/display_mode");
+                        break;
+                    case SettingsSelectBinding::RackLimit:
+                        expectedKey = QStringLiteral("rack/limit");
+                        break;
+                    case SettingsSelectBinding::ClipboardHistoryLimit:
+                        expectedKey = QStringLiteral("clipboard_history/limit");
+                        break;
                     case SettingsSelectBinding::FullscreenWindowFilter:
                         expectedKey = QStringLiteral("global_shortcuts/fullscreen_window_filter");
                         break;
@@ -6412,6 +6546,15 @@ QStringList SettingsCatalog::validationErrors() const {
                         std::get_if<SettingsSwitchDefinition>(&itemDefinition.payload)) {
                     QString expectedKey;
                     switch (switchDefinition->binding) {
+                    case SettingsSwitchBinding::RackEnabled:
+                        expectedKey = QStringLiteral("rack/enabled");
+                        break;
+                    case SettingsSwitchBinding::RackAutoAddScreenshots:
+                        expectedKey = QStringLiteral("rack/auto_add_screenshots");
+                        break;
+                    case SettingsSwitchBinding::ClipboardHistoryEnabled:
+                        expectedKey = QStringLiteral("clipboard_history/enabled");
+                        break;
                     case SettingsSwitchBinding::HistoryEnabled:
                         expectedKey = QStringLiteral("capture_history/enabled");
                         break;

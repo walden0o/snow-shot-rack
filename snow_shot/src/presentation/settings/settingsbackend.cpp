@@ -50,6 +50,32 @@
 
 namespace snow_shot::presentation::settings {
 namespace {
+QString rackSelectKey(SettingsSelectBinding binding) {
+    switch (binding) {
+    case SettingsSelectBinding::RackDisplayMode:
+        return QStringLiteral("rack/display_mode");
+    case SettingsSelectBinding::RackLimit:
+        return QStringLiteral("rack/limit");
+    case SettingsSelectBinding::ClipboardHistoryLimit:
+        return QStringLiteral("clipboard_history/limit");
+    default:
+        return {};
+    }
+}
+
+QString rackSwitchKey(SettingsSwitchBinding binding) {
+    switch (binding) {
+    case SettingsSwitchBinding::RackEnabled:
+        return QStringLiteral("rack/enabled");
+    case SettingsSwitchBinding::RackAutoAddScreenshots:
+        return QStringLiteral("rack/auto_add_screenshots");
+    case SettingsSwitchBinding::ClipboardHistoryEnabled:
+        return QStringLiteral("clipboard_history/enabled");
+    default:
+        return {};
+    }
+}
+
 const QString kContextMenuModeKey = QStringLiteral("system/context_menu_mode");
 const QString kContextMenuShortcutKey =
     QStringLiteral("context_menu_shortcuts/edit_with_snow_shot");
@@ -529,6 +555,13 @@ bool BuiltInSettingsBackend::selectEnabled(SettingsSelectBinding binding) const 
 
 QVariant BuiltInSettingsBackend::selectValue(SettingsSelectBinding binding) const {
     switch (binding) {
+    case SettingsSelectBinding::RackDisplayMode:
+    case SettingsSelectBinding::RackLimit:
+    case SettingsSelectBinding::ClipboardHistoryLimit:
+        return storage::ApplicationStorage::instance()
+            .configuration()
+            .value(rackSelectKey(binding))
+            .toVariant();
     case SettingsSelectBinding::FullscreenWindowFilter:
         return storage::GlobalShortcutSettings().fullscreenWindowFilter();
     case SettingsSelectBinding::TranslationSourceLanguage:
@@ -755,6 +788,11 @@ BuiltInSettingsBackend::dynamicSelectOptions(SettingsSelectBinding binding) cons
 bool BuiltInSettingsBackend::applySelectValue(SettingsSelectBinding binding,
                                               const QVariant& value) {
     switch (binding) {
+    case SettingsSelectBinding::RackDisplayMode:
+    case SettingsSelectBinding::RackLimit:
+    case SettingsSelectBinding::ClipboardHistoryLimit:
+        return storage::ApplicationStorage::instance().configuration().setValue(
+            rackSelectKey(binding), value.toString());
     case SettingsSelectBinding::TranslationSourceLanguage:
     case SettingsSelectBinding::TranslationPrimaryTargetLanguage:
     case SettingsSelectBinding::TranslationSecondaryTargetLanguage:
@@ -969,6 +1007,13 @@ bool BuiltInSettingsBackend::applySelectValue(SettingsSelectBinding binding,
 
 bool BuiltInSettingsBackend::switchValue(SettingsSwitchBinding binding) const {
     switch (binding) {
+    case SettingsSwitchBinding::RackEnabled:
+    case SettingsSwitchBinding::RackAutoAddScreenshots:
+    case SettingsSwitchBinding::ClipboardHistoryEnabled:
+        return storage::ApplicationStorage::instance()
+            .configuration()
+            .value(rackSwitchKey(binding))
+            .toBool();
     case SettingsSwitchBinding::OcrHardwareAcceleration:
         return storage::ApplicationStorage::instance()
             .configuration()
@@ -1298,6 +1343,8 @@ bool BuiltInSettingsBackend::switchEnabled(SettingsSwitchBinding binding) const 
 }
 
 bool BuiltInSettingsBackend::applySwitchValue(SettingsSwitchBinding binding, bool value) {
+    if (const QString key = rackSwitchKey(binding); !key.isEmpty())
+        return storage::ApplicationStorage::instance().configuration().setValue(key, value);
     if (binding == SettingsSwitchBinding::AnnotationModeWhenOpeningForEditing)
         return switchEnabled(binding) &&
                storage::SystemSettings().setAnnotationModeWhenOpeningForEditing(value);
@@ -1590,6 +1637,9 @@ bool BuiltInSettingsBackend::applySwitchValue(SettingsSwitchBinding binding, boo
     case SettingsSwitchBinding::McpEnabled:
     case SettingsSwitchBinding::AutoStartAtBoot:
     case SettingsSwitchBinding::LaunchAsAdministrator:
+    case SettingsSwitchBinding::RackEnabled:
+    case SettingsSwitchBinding::RackAutoAddScreenshots:
+    case SettingsSwitchBinding::ClipboardHistoryEnabled:
     case SettingsSwitchBinding::AnnotationModeWhenOpeningForEditing:
     case SettingsSwitchBinding::DrawingAutomaticallySelectNewlyCreatedElements:
     case SettingsSwitchBinding::DrawingDeleteTextAfterCursor:
@@ -2816,6 +2866,10 @@ SettingsResetResult BuiltInSettingsBackend::resetSectionWithResults(SettingsSect
         };
         resetShortcut(GlobalShortcutAction::OpenCaptureHistory,
                       QStringLiteral("global_shortcuts/open_capture_history"));
+        resetShortcut(GlobalShortcutAction::ToggleRack,
+                      QStringLiteral("global_shortcuts/toggle_rack"));
+        resetShortcut(GlobalShortcutAction::ToggleClipboardHistory,
+                      QStringLiteral("global_shortcuts/toggle_clipboard_history"));
         resetShortcut(GlobalShortcutAction::GlobalCanvas,
                       QStringLiteral("global_shortcuts/global_canvas"));
         resetShortcut(GlobalShortcutAction::StitchSelectedImages,

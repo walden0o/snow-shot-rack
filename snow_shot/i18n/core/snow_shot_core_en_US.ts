@@ -990,6 +990,105 @@ so every moment on screen can be expressed clearly and shared easily</translatio
         </message>
     </context>
     <context>
+        <name>snow_shot::presentation::RackWindow</name>
+        <message>
+            <source>Clear</source>
+            <translation>Clear</translation>
+        </message>
+        <message>
+            <source>Click to copy again; drag to share</source>
+            <translation>Click to copy again; drag to share</translation>
+        </message>
+        <message>
+            <source>Click to copy image; drag to share</source>
+            <translation>Click to copy image; drag to share</translation>
+        </message>
+        <message>
+            <source>Clipboard</source>
+            <translation>Clipboard</translation>
+        </message>
+        <message>
+            <source>Clipboard history</source>
+            <translation>Clipboard history</translation>
+        </message>
+        <message>
+            <source>Clipboard history is off. Turn it on in Settings</source>
+            <translation>Clipboard history is off. Turn it on in Settings</translation>
+        </message>
+        <message>
+            <source>Collapse</source>
+            <translation>Collapse</translation>
+        </message>
+        <message>
+            <source>Copied text and images appear here</source>
+            <translation>Copied text and images appear here</translation>
+        </message>
+        <message>
+            <source>Copied to clipboard</source>
+            <translation>Copied to clipboard</translation>
+        </message>
+        <message>
+            <source>Copy image</source>
+            <translation>Copy image</translation>
+        </message>
+        <message>
+            <source>Copy text</source>
+            <translation>Copy text</translation>
+        </message>
+        <message>
+            <source>Could not prepare the image file</source>
+            <translation>Could not prepare the image file</translation>
+        </message>
+        <message>
+            <source>No matching clipboard items</source>
+            <translation>No matching clipboard items</translation>
+        </message>
+        <message>
+            <source>Open image</source>
+            <translation>Open image</translation>
+        </message>
+        <message>
+            <source>Rack</source>
+            <translation>Rack</translation>
+        </message>
+        <message>
+            <source>Rack screenshots</source>
+            <translation>Rack screenshots</translation>
+        </message>
+        <message>
+            <source>Remove from Rack</source>
+            <translation>Remove from Rack</translation>
+        </message>
+        <message>
+            <source>Remove from history</source>
+            <translation>Remove from history</translation>
+        </message>
+        <message>
+            <source>Screenshot Rack</source>
+            <translation>Screenshot Rack</translation>
+        </message>
+        <message>
+            <source>Screenshots</source>
+            <translation>Screenshots</translation>
+        </message>
+        <message>
+            <source>Search clipboard history</source>
+            <translation>Search clipboard history</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <translation>Settings</translation>
+        </message>
+        <message>
+            <source>Text copied to clipboard</source>
+            <translation>Text copied to clipboard</translation>
+        </message>
+        <message>
+            <source>Your next screenshot will appear here</source>
+            <translation>Your next screenshot will appear here</translation>
+        </message>
+    </context>
+    <context>
         <name>snow_shot::presentation::SystemTrayController</name>
         <message>
             <source>Capture</source>

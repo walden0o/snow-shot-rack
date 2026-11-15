@@ -990,6 +990,105 @@ so every moment on screen can be expressed clearly and shared easily</source>
         </message>
     </context>
     <context>
+        <name>snow_shot::presentation::RackWindow</name>
+        <message>
+            <source>Clear</source>
+            <translation>清空</translation>
+        </message>
+        <message>
+            <source>Click to copy again; drag to share</source>
+            <translation>单击再次复制；拖出即可分享</translation>
+        </message>
+        <message>
+            <source>Click to copy image; drag to share</source>
+            <translation>单击复制图像；拖出即可分享</translation>
+        </message>
+        <message>
+            <source>Clipboard</source>
+            <translation>剪贴板</translation>
+        </message>
+        <message>
+            <source>Clipboard history</source>
+            <translation>剪贴板历史</translation>
+        </message>
+        <message>
+            <source>Clipboard history is off. Turn it on in Settings</source>
+            <translation>剪贴板历史已关闭。请在设置中开启</translation>
+        </message>
+        <message>
+            <source>Collapse</source>
+            <translation>收起</translation>
+        </message>
+        <message>
+            <source>Copied text and images appear here</source>
+            <translation>复制的文本和图像会显示在这里</translation>
+        </message>
+        <message>
+            <source>Copied to clipboard</source>
+            <translation>已复制到剪贴板</translation>
+        </message>
+        <message>
+            <source>Copy image</source>
+            <translation>复制图像</translation>
+        </message>
+        <message>
+            <source>Copy text</source>
+            <translation>复制文本</translation>
+        </message>
+        <message>
+            <source>Could not prepare the image file</source>
+            <translation>无法准备图像文件</translation>
+        </message>
+        <message>
+            <source>No matching clipboard items</source>
+            <translation>没有匹配的剪贴板项目</translation>
+        </message>
+        <message>
+            <source>Open image</source>
+            <translation>打开图像</translation>
+        </message>
+        <message>
+            <source>Rack</source>
+            <translation>晾衣架</translation>
+        </message>
+        <message>
+            <source>Rack screenshots</source>
+            <translation>晾衣架截图</translation>
+        </message>
+        <message>
+            <source>Remove from Rack</source>
+            <translation>从晾衣架移除</translation>
+        </message>
+        <message>
+            <source>Remove from history</source>
+            <translation>从历史记录移除</translation>
+        </message>
+        <message>
+            <source>Screenshot Rack</source>
+            <translation>截图晾衣架</translation>
+        </message>
+        <message>
+            <source>Screenshots</source>
+            <translation>截图</translation>
+        </message>
+        <message>
+            <source>Search clipboard history</source>
+            <translation>搜索剪贴板历史</translation>
+        </message>
+        <message>
+            <source>Settings</source>
+            <translation>设置</translation>
+        </message>
+        <message>
+            <source>Text copied to clipboard</source>
+            <translation>文本已复制到剪贴板</translation>
+        </message>
+        <message>
+            <source>Your next screenshot will appear here</source>
+            <translation>下一张截图会显示在这里</translation>
+        </message>
+    </context>
+    <context>
         <name>snow_shot::presentation::SystemTrayController</name>
         <message>
             <source>Capture</source>

@@ -53,6 +53,8 @@ void shortcutFamiliesAreComplete() {
         {GlobalShortcutAction::ToggleGlobalShortcuts, std::nullopt},
         {GlobalShortcutAction::ToggleGlobalMouse, std::nullopt},
         {GlobalShortcutAction::ToggleDisableOnFocusedFullscreenWindow, std::nullopt},
+        {GlobalShortcutAction::ToggleRack, std::nullopt},
+        {GlobalShortcutAction::ToggleClipboardHistory, std::nullopt},
     };
     require(expected.size() == snow_shot::presentation::globalActionTraitsCatalog.size(),
             "every stable shortcut has an explicit family contract");

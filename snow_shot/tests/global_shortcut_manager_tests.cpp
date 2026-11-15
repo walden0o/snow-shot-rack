@@ -68,6 +68,8 @@ constexpr std::array ALL_ACTIONS{
     GlobalShortcutAction::ToggleGlobalShortcuts,
     GlobalShortcutAction::ToggleGlobalMouse,
     GlobalShortcutAction::ToggleDisableOnFocusedFullscreenWindow,
+    GlobalShortcutAction::ToggleRack,
+    GlobalShortcutAction::ToggleClipboardHistory,
 };
 
 void require(bool condition, const char* message) {
