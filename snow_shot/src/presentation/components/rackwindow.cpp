@@ -14,6 +14,7 @@
 #include <QDrag>
 #include <QEvent>
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
@@ -23,6 +24,8 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QScreen>
+#include <QStyleOptionViewItem>
+#include <QStyledItemDelegate>
 #include <QVBoxLayout>
 #include <algorithm>
 #include <functional>
@@ -38,6 +41,87 @@ class RackList final : public QListWidget {
     void startDrag(Qt::DropActions) override {
         if (currentItem() && drag)
             drag(currentItem()->data(Qt::UserRole).toString());
+    }
+};
+
+// Screenshots hang like photos on a clothesline: a pin and string drop from the
+// rope (painted by the window) to a slightly tilted paper card.
+inline constexpr int RackRopeOffset = 3;
+inline constexpr int RackPinLength = 11;
+class RackCardDelegate final : public QStyledItemDelegate {
+  public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option,
+               const QModelIndex& index) const override {
+        const auto* view = qobject_cast<const QListView*>(option.widget);
+        if (!view || view->viewMode() != QListView::IconMode) {
+            QStyledItemDelegate::paint(painter, option, index);
+            return;
+        }
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        const QRect cell = option.rect;
+        const qreal centerX = cell.x() + cell.width() / 2.0;
+        const QPointF ropePoint(centerX, cell.top() + RackRopeOffset);
+        const QPointF pinPoint(centerX, ropePoint.y() + RackPinLength);
+
+        const QRectF cardBounds(0, 0, cell.width() - 26, cell.height() - RackPinLength - 14);
+        // Alternate the tilt so neighbouring cards hang at slightly different angles.
+        const qreal tilt = (index.row() % 4 - 1.5) * 1.6;
+
+        painter->setPen(QPen(option.palette.color(QPalette::Mid), 1.0));
+        painter->drawLine(ropePoint, pinPoint);
+
+        painter->translate(pinPoint);
+        painter->rotate(tilt);
+        painter->translate(-cardBounds.width() / 2.0, 0);
+        const QRectF paper(0, 0, cardBounds.width(), cardBounds.height());
+
+        QColor shadow = option.palette.color(QPalette::Shadow);
+        shadow.setAlpha(70);
+        painter->setPen(Qt::NoPen);
+        painter.setBrush(shadow);
+        painter.drawRoundedRect(paper.translated(0, 2.5), 7, 7);
+
+        const bool selected = option.state & QStyle::State_Selected;
+        const bool hovered = option.state & QStyle::State_MouseOver;
+        painter.setBrush(option.palette.color(QPalette::Base));
+        painter.setPen(QPen(selected ? option.palette.color(QPalette::Highlight)
+                                     : option.palette.color(QPalette::Mid),
+                            selected ? 1.6 : 1.0));
+        painter.drawRoundedRect(paper, 6, 6);
+        if (hovered && !selected) {
+            QColor tint = option.palette.color(QPalette::Highlight);
+            tint.setAlpha(20);
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(tint);
+            painter.drawRoundedRect(paper, 6, 6);
+        }
+
+        const QRectF imageRect = paper.adjusted(5, 5, -5, -20);
+        const QIcon icon = index.data(Qt::DecorationRole).value<QIcon>();
+        const QPixmap thumbnail = icon.isNull() ? QPixmap() : icon.pixmap(QSize(288, 200));
+        if (!thumbnail.isNull()) {
+            const QSizeF fit =
+                QSizeF(thumbnail.size()).scaled(imageRect.size(), Qt::KeepAspectRatio);
+            const QRectF thumbRect((paper.center().x() - fit.width() / 2.0),
+                                   imageRect.top() + (imageRect.height() - fit.height()) / 2.0,
+                                   fit.width(), fit.height());
+            painter->setPen(Qt::NoPen);
+            painter.drawPixmap(thumbRect, thumbnail, QRectF(thumbnail.rect()));
+        }
+        painter.setPen(option.palette.color(QPalette::WindowText));
+        painter.drawText(QRectF(4, paper.bottom() - 16, paper.width() - 8, 13), Qt::AlignCenter,
+                         index.data(Qt::DisplayRole).toString());
+        painter->restore();
+
+        // Pin stays upright regardless of card tilt, clipped over the card edge.
+        painter->save();
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(option.palette.color(QPalette::Highlight));
+        painter.drawRoundedRect(QRectF(pinPoint.x() - 4, pinPoint.y() - 4, 8, 15), 3, 3);
+        painter->restore();
     }
 };
 } // namespace
@@ -89,8 +173,9 @@ RackWindow::RackWindow(RackContentModel& model, RackContentModel& clipboardModel
     list->setFlow(QListView::LeftToRight);
     list->setWrapping(false);
     list->setIconSize(QSize(144, 100));
-    list->setGridSize(QSize(164, 132));
+    list->setGridSize(QSize(168, 140));
     list->setSpacing(4);
+    list->setItemDelegate(new RackCardDelegate(list));
     list->setDragEnabled(true);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
     list->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -347,7 +432,7 @@ void RackWindow::refresh() {
         m_list->setViewMode(QListView::IconMode);
         m_list->setFlow(QListView::LeftToRight);
         m_list->setIconSize(QSize(144, 100));
-        m_list->setGridSize(QSize(164, 132));
+        m_list->setGridSize(QSize(168, 140));
     }
     const auto values = clipboard ? (m_clipboardEnabled ? m_clipboardModel.search(m_search->text())
                                                         : QVector<RackEntry>())
@@ -513,6 +598,22 @@ void RackWindow::paintEvent(QPaintEvent*) {
     painter.setPen(palette().color(QPalette::Mid));
     painter.setBrush(palette().color(QPalette::Window));
     painter.drawRoundedRect(QRectF(rect()).adjusted(0.5, -12, -0.5, -0.5), 18, 18);
+    if (m_expanded && m_view == View::Screenshots && m_list->count() > 0) {
+        // The clothesline: one rope anchored across the cards row. Delegates drop
+        // a string and pin from each card up to this line.
+        const QRect itemRect = m_list->visualItemRect(m_list->item(0));
+        const qreal top = m_list->viewport()->mapTo(this, QPoint(0, itemRect.top())).y() +
+                          RackRopeOffset;
+        const qreal left = m_body->geometry().left() + 14;
+        const qreal right = m_body->geometry().right() - 14;
+        painter.setPen(QPen(palette().color(QPalette::Dark), 1.4));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawLine(QPointF(left, top), QPointF(right, top));
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(palette().color(QPalette::Dark));
+        painter.drawEllipse(QPointF(left, top), 2.6, 2.6);
+        painter.drawEllipse(QPointF(right, top), 2.6, 2.6);
+    }
     painter.setPen(Qt::NoPen);
     painter.setBrush(palette().color(QPalette::Text));
     painter.drawRoundedRect(QRectF(width() / 2.0 - 20, 2, 40, 3), 1.5, 1.5);
