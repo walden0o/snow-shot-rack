@@ -833,6 +833,51 @@ endif()
 
 
 class MacOSMinizipExports(unittest.TestCase):
+    def test_macos_disables_undeclared_host_codecs_and_crypto(self):
+        cmake = shutil.which('cmake')
+        self.assertIsNotNone(cmake)
+        port = ROOT / 'cmake/vcpkg-overlay-ports/minizip-ng/portfile.cmake'
+        disabled = {f'-DMZ_{name}=OFF' for name in
+                    ('BZIP2', 'LZMA', 'ZSTD', 'OPENSSL', 'LIBBSD')}
+        for target in ('OSX', 'WINDOWS', 'LINUX'):
+            with self.subTest(target=target), \
+                    tempfile.TemporaryDirectory(prefix='snow minizip features ') as directory:
+                root = Path(directory)
+                package = root / 'package/share/minizip-ng'
+                package.mkdir(parents=True)
+                (package / 'minizip-ng.cmake').touch()
+                mocks = ''.join(f'function({command})\nendfunction()\n' for command in
+                                ('vcpkg_from_github', 'vcpkg_check_linkage',
+                                 'vcpkg_cmake_install', 'vcpkg_fixup_pkgconfig',
+                                 'vcpkg_cmake_config_fixup', 'vcpkg_copy_pdbs',
+                                 'vcpkg_install_copyright'))
+                (root / 'CMakeLists.txt').write_text(f'''
+cmake_minimum_required(VERSION 4.2)
+project(snow_minizip_features LANGUAGES NONE)
+set(VCPKG_TARGET_IS_{target} TRUE)
+set(CURRENT_PACKAGES_DIR "${{CMAKE_CURRENT_SOURCE_DIR}}/package")
+{mocks}
+function(vcpkg_check_features)
+    set(FEATURE_OPTIONS "-DMZ_ZLIB=ON" PARENT_SCOPE)
+endfunction()
+function(vcpkg_cmake_configure)
+    file(WRITE "${{CMAKE_CURRENT_BINARY_DIR}}/options.txt" "${{ARGV}}")
+endfunction()
+include([==[{port.as_posix()}]==])
+''')
+                result = subprocess.run([cmake, '-S', str(root), '-B', str(root / 'build')],
+                                        text=True, capture_output=True)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                options = set((root / 'build/options.txt').read_text().split(';'))
+                self.assertIn('-DMZ_ZLIB=ON', options)
+                self.assertIn('-DMZ_FETCH_LIBS=OFF', options)
+                if target == 'OSX':
+                    self.assertTrue(disabled <= options)
+                    self.assertNotIn('-DMZ_PKCRYPT=OFF', options)
+                    self.assertNotIn('-DMZ_WZAES=OFF', options)
+                else:
+                    self.assertFalse(disabled & options)
+
     def test_system_dependencies_do_not_retain_the_package_builders_sdk(self):
         managed_cmake = ROOT / '.tools/macos-dev/bin/cmake'
         cmake = str(managed_cmake) if managed_cmake.is_file() else shutil.which('cmake')

@@ -18,6 +18,17 @@ vcpkg_check_features(
     FEATURES zlib MZ_ZLIB
 )
 
+if(VCPKG_TARGET_IS_OSX)
+    # Use declared zlib/Apple codecs and native crypto, never host Homebrew libraries.
+    list(APPEND FEATURE_OPTIONS
+        -DMZ_BZIP2=OFF
+        -DMZ_LZMA=OFF
+        -DMZ_ZSTD=OFF
+        -DMZ_OPENSSL=OFF
+        -DMZ_LIBBSD=OFF
+    )
+endif()
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
