@@ -33,6 +33,16 @@ enum class RackCollapseTrigger { Automatic, Explicit };
 [[nodiscard]] bool rackCollapseBlocked(const RackInteractionState& state,
                                        RackCollapseTrigger trigger);
 
+enum class RackCloseDisposition { Dismiss, RestoreAlways };
+// A close event must be accepted (ignoring it vetoes application quit).
+// Afterwards an always-mode panel must be restored — deferred, because
+// QWidget hides accepted windows once the handler returns — while
+// hover-mode panels simply dismiss.
+[[nodiscard]] inline RackCloseDisposition rackCloseDisposition(RackDisplayMode mode) {
+    return mode == RackDisplayMode::Always ? RackCloseDisposition::RestoreAlways
+                                           : RackCloseDisposition::Dismiss;
+}
+
 struct RackPointerState {
     RackDisplayMode mode = RackDisplayMode::Hover;
     bool expanded = false;

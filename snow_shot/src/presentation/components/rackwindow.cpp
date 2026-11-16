@@ -606,7 +606,8 @@ void RackWindow::closeEvent(QCloseEvent* event) {
     event->accept();
     // QWidget hides the window after an accepted close, so an always-mode
     // panel must be restored after closeEvent returns, not inside it.
-    if (m_mode == QStringLiteral("always"))
+    if (rackCloseDisposition(rackDisplayModeFromName(m_mode)) ==
+        RackCloseDisposition::RestoreAlways)
         QTimer::singleShot(0, this, [this] { expand(); });
     else
         dismiss();
