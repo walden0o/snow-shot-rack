@@ -80,22 +80,22 @@ class RackCardDelegate final : public QStyledItemDelegate {
         QColor shadow = option.palette.color(QPalette::Shadow);
         shadow.setAlpha(70);
         painter->setPen(Qt::NoPen);
-        painter.setBrush(shadow);
-        painter.drawRoundedRect(paper.translated(0, 2.5), 7, 7);
+        painter->setBrush(shadow);
+        painter->drawRoundedRect(paper.translated(0, 2.5), 7, 7);
 
         const bool selected = option.state & QStyle::State_Selected;
         const bool hovered = option.state & QStyle::State_MouseOver;
-        painter.setBrush(option.palette.color(QPalette::Base));
-        painter.setPen(QPen(selected ? option.palette.color(QPalette::Highlight)
-                                     : option.palette.color(QPalette::Mid),
-                            selected ? 1.6 : 1.0));
-        painter.drawRoundedRect(paper, 6, 6);
+        painter->setBrush(option.palette.color(QPalette::Base));
+        painter->setPen(QPen(selected ? option.palette.color(QPalette::Highlight)
+                                      : option.palette.color(QPalette::Mid),
+                             selected ? 1.6 : 1.0));
+        painter->drawRoundedRect(paper, 6, 6);
         if (hovered && !selected) {
             QColor tint = option.palette.color(QPalette::Highlight);
             tint.setAlpha(20);
-            painter.setPen(Qt::NoPen);
-            painter.setBrush(tint);
-            painter.drawRoundedRect(paper, 6, 6);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(tint);
+            painter->drawRoundedRect(paper, 6, 6);
         }
 
         const QRectF imageRect = paper.adjusted(5, 5, -5, -20);
@@ -108,19 +108,19 @@ class RackCardDelegate final : public QStyledItemDelegate {
                                    imageRect.top() + (imageRect.height() - fit.height()) / 2.0,
                                    fit.width(), fit.height());
             painter->setPen(Qt::NoPen);
-            painter.drawPixmap(thumbRect, thumbnail, QRectF(thumbnail.rect()));
+            painter->drawPixmap(thumbRect, thumbnail, QRectF(thumbnail.rect()));
         }
-        painter.setPen(option.palette.color(QPalette::WindowText));
-        painter.drawText(QRectF(4, paper.bottom() - 16, paper.width() - 8, 13), Qt::AlignCenter,
-                         index.data(Qt::DisplayRole).toString());
+        painter->setPen(option.palette.color(QPalette::WindowText));
+        painter->drawText(QRectF(4, paper.bottom() - 16, paper.width() - 8, 13), Qt::AlignCenter,
+                          index.data(Qt::DisplayRole).toString());
         painter->restore();
 
         // Pin stays upright regardless of card tilt, clipped over the card edge.
         painter->save();
-        painter.setRenderHint(QPainter::Antialiasing);
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(option.palette.color(QPalette::Highlight));
-        painter.drawRoundedRect(QRectF(pinPoint.x() - 4, pinPoint.y() - 4, 8, 15), 3, 3);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(option.palette.color(QPalette::Highlight));
+        painter->drawRoundedRect(QRectF(pinPoint.x() - 4, pinPoint.y() - 4, 8, 15), 3, 3);
         painter->restore();
     }
 };
