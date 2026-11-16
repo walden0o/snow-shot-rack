@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "snow_shot/presentation/rackwindow.h"
 
+#include "racklist_p.h"
 #include "snow_shot/platform/screenshotnative.h"
 #include "snow_shot/presentation/rackhoverpolicy.h"
 #include "snow_shot/presentation/styles/thememanager.h"
@@ -28,25 +29,14 @@
 #include <QStyledItemDelegate>
 #include <QVBoxLayout>
 #include <algorithm>
-#include <functional>
 
 namespace snow_shot::presentation {
 namespace {
-class RackList final : public QListWidget {
-  public:
-    using QListWidget::QListWidget;
-    std::function<void(const QString&)> drag;
-
-  protected:
-    void startDrag(Qt::DropActions) override {
-        if (currentItem() && drag)
-            drag(currentItem()->data(Qt::UserRole).toString());
-    }
-};
+using detail::RackList;
+using detail::RackRopeOffset;
 
 // Screenshots hang like photos on a clothesline: a pin and string drop from the
-// rope (painted by the window) to a slightly tilted paper card.
-inline constexpr int RackRopeOffset = 3;
+// rope (painted by the list viewport) to a slightly tilted paper card.
 inline constexpr int RackPinLength = 11;
 class RackCardDelegate final : public QStyledItemDelegate {
   public:
@@ -69,7 +59,7 @@ class RackCardDelegate final : public QStyledItemDelegate {
         // Alternate the tilt so neighbouring cards hang at slightly different angles.
         const qreal tilt = (index.row() % 4 - 1.5) * 1.6;
 
-        painter->setPen(QPen(option.palette.color(QPalette::Mid), 1.0));
+        painter->setPen(QPen(option.palette.color(QPalette::Dark), 1.0));
         painter->drawLine(ropePoint, pinPoint);
 
         painter->translate(pinPoint);
@@ -586,8 +576,9 @@ void RackWindow::applyTheme() {
     colors.setColor(QPalette::Base, scheme.map.colorBgContainer);
     colors.setColor(QPalette::Text, scheme.map.colorText);
     colors.setColor(QPalette::WindowText, scheme.map.colorText);
-    colors.setColor(QPalette::Highlight, scheme.map.colorPrimaryBg);
-    colors.setColor(QPalette::HighlightedText, scheme.map.colorText);
+    colors.setColor(QPalette::Dark, scheme.map.colorTextSecondary);
+    colors.setColor(QPalette::Highlight, scheme.map.colorPrimary);
+    colors.setColor(QPalette::HighlightedText, scheme.alias.accentText);
     setPalette(colors);
     update();
 }
@@ -598,22 +589,6 @@ void RackWindow::paintEvent(QPaintEvent*) {
     painter.setPen(palette().color(QPalette::Mid));
     painter.setBrush(palette().color(QPalette::Window));
     painter.drawRoundedRect(QRectF(rect()).adjusted(0.5, -12, -0.5, -0.5), 18, 18);
-    if (m_expanded && m_view == View::Screenshots && m_list->count() > 0) {
-        // The clothesline: one rope anchored across the cards row. Delegates drop
-        // a string and pin from each card up to this line.
-        const QRect itemRect = m_list->visualItemRect(m_list->item(0));
-        const qreal top = m_list->viewport()->mapTo(this, QPoint(0, itemRect.top())).y() +
-                          RackRopeOffset;
-        const qreal left = m_body->geometry().left() + 14;
-        const qreal right = m_body->geometry().right() - 14;
-        painter.setPen(QPen(palette().color(QPalette::Dark), 1.4));
-        painter.setBrush(Qt::NoBrush);
-        painter.drawLine(QPointF(left, top), QPointF(right, top));
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(palette().color(QPalette::Dark));
-        painter.drawEllipse(QPointF(left, top), 2.6, 2.6);
-        painter.drawEllipse(QPointF(right, top), 2.6, 2.6);
-    }
     painter.setPen(Qt::NoPen);
     painter.setBrush(palette().color(QPalette::Text));
     painter.drawRoundedRect(QRectF(width() / 2.0 - 20, 2, 40, 3), 1.5, 1.5);

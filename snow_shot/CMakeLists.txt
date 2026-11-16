@@ -170,6 +170,12 @@ if(SNOW_SHOT_BUILD_TESTS)
     target_link_libraries(snow-shot-rack-hover-policy-tests PRIVATE Qt6::Core)
     add_test(NAME snow-shot-rack-hover-policy-tests COMMAND snow-shot-rack-hover-policy-tests)
     set_tests_properties(snow-shot-rack-hover-policy-tests PROPERTIES LABELS "unit" TIMEOUT 15)
+    add_executable(snow-shot-rack-render-tests tests/rack_render_tests.cpp)
+    target_link_libraries(snow-shot-rack-render-tests PRIVATE Qt6::Widgets)
+    qt_import_plugins(snow-shot-rack-render-tests INCLUDE Qt6::QOffscreenIntegrationPlugin)
+    add_test(NAME snow-shot-rack-render-tests COMMAND snow-shot-rack-render-tests)
+    set_tests_properties(snow-shot-rack-render-tests PROPERTIES
+        LABELS "unit" TIMEOUT 15 ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
 endif()
 
 add_library(snow_shot_canvas_status_readout STATIC
