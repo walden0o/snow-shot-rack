@@ -604,9 +604,10 @@ void RackWindow::closeEvent(QCloseEvent* event) {
     // The rack is always-on: closing only dismisses the panel. The event
     // must still be accepted — ignoring it vetoes QApplication::quit.
     event->accept();
-    // In always mode a WM close must not strand the panel; re-expand it.
+    // QWidget hides the window after an accepted close, so an always-mode
+    // panel must be restored after closeEvent returns, not inside it.
     if (m_mode == QStringLiteral("always"))
-        expand();
+        QTimer::singleShot(0, this, [this] { expand(); });
     else
         dismiss();
 }
