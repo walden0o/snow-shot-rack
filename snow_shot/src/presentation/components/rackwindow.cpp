@@ -175,7 +175,7 @@ RackWindow::View RackWindow::view() const {
 
 void RackWindow::showClipboardHistory() {
     if (m_expanded && m_view == View::Clipboard) {
-        collapse();
+        dismiss();
         return;
     }
     setView(View::Clipboard);
@@ -217,7 +217,7 @@ void RackWindow::setCaptureActive(const QString& source, bool active) {
 
 void RackWindow::toggle() {
     if (m_expanded)
-        collapse();
+        dismiss();
     else
         expand(true);
 }
@@ -238,6 +238,13 @@ void RackWindow::expand(bool activate) {
         activateWindow();
         m_list->setFocus();
     }
+}
+
+void RackWindow::dismiss() {
+    // An explicit close wins over search focus, which otherwise holds the panel open.
+    if (m_search->hasFocus())
+        m_search->clearFocus();
+    collapse();
 }
 
 void RackWindow::collapse() {
@@ -511,7 +518,7 @@ void RackWindow::changeEvent(QEvent* event) {
 
 void RackWindow::closeEvent(QCloseEvent* event) {
     event->ignore();
-    collapse();
+    dismiss();
 }
 
 void RackWindow::mousePressEvent(QMouseEvent* event) {
@@ -523,7 +530,7 @@ void RackWindow::mousePressEvent(QMouseEvent* event) {
 
 void RackWindow::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Escape) {
-        collapse();
+        dismiss();
         return;
     }
     if (auto* item = m_list->currentItem()) {

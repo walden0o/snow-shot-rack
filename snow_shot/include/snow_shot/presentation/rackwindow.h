@@ -49,6 +49,7 @@ class RackWindow final : public QWidget {
     void keyPressEvent(QKeyEvent* event) override;
 
   private:
+    void dismiss();
     void refresh();
     void retranslateUi();
     void applyTheme();
