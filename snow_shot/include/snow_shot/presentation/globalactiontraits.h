@@ -53,11 +53,13 @@ inline constexpr auto globalActionTraitsCatalog = [] {
         GlobalActionTraits{A::ToggleWindowUnderCursorAlwaysOnTop, {}, P::None},
         GlobalActionTraits{A::ScreenshotScrolling, F::Screenshot, P::ScreenRecording},
         GlobalActionTraits{A::EditSelectedImages, {}, P::None},
-        GlobalActionTraits{A::ToggleGlobalMouse, {}, P::None}};
+        GlobalActionTraits{A::ToggleGlobalMouse, {}, P::None},
+        GlobalActionTraits{A::ToggleRack, {}, P::None},
+        GlobalActionTraits{A::ToggleClipboardHistory, {}, P::None}};
 }();
 
 static_assert(globalActionTraitsCatalog.size() ==
-              static_cast<std::size_t>(GlobalShortcutAction::ToggleGlobalMouse) + 1);
+              static_cast<std::size_t>(GlobalShortcutAction::ToggleClipboardHistory) + 1);
 static_assert([] {
     for (std::size_t index = 0; index < globalActionTraitsCatalog.size(); ++index)
         if (static_cast<std::size_t>(globalActionTraitsCatalog[index].action) != index)

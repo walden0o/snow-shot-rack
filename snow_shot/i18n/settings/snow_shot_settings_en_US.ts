@@ -1530,6 +1530,10 @@
             <translation>83</translation>
         </message>
         <message>
+            <source>A temporary shelf for screenshots</source>
+            <translation>A temporary shelf for screenshots</translation>
+        </message>
+        <message>
             <source>API URL</source>
             <translation>API URL</translation>
         </message>
@@ -1584,6 +1588,14 @@
         <message>
             <source>Add edit with Snow Shot to the Windows context menu to pin a supported image or document file to the screen</source>
             <translation>Add edit with Snow Shot to the Windows context menu to pin a supported image or document file to the screen</translation>
+        </message>
+        <message>
+            <source>Add screenshots automatically</source>
+            <translation>Add screenshots automatically</translation>
+        </message>
+        <message>
+            <source>Add screenshots to Rack when they are saved to capture history</source>
+            <translation>Add screenshots to Rack when they are saved to capture history</translation>
         </message>
         <message>
             <source>Adjust MP4 quality and file size</source>
@@ -1652,6 +1664,10 @@
         <message>
             <source>Always show</source>
             <translation>Always show</translation>
+        </message>
+        <message>
+            <source>Always visible</source>
+            <translation>Always visible</translation>
         </message>
         <message>
             <source>Angle annotation</source>
@@ -2038,6 +2054,10 @@
             <translation>Choose automatic window or window sub-element selection, or select manually</translation>
         </message>
         <message>
+            <source>Choose how Rack opens and closes</source>
+            <translation>Choose how Rack opens and closes</translation>
+        </message>
+        <message>
             <source>Choose how much execution time the application receives</source>
             <translation>Choose how much execution time the application receives</translation>
         </message>
@@ -2252,6 +2272,10 @@
         <message>
             <source>Clipboard content</source>
             <translation>Clipboard content</translation>
+        </message>
+        <message>
+            <source>Clipboard history</source>
+            <translation>Clipboard history</translation>
         </message>
         <message>
             <source>Close</source>
@@ -2670,6 +2694,10 @@
             <translation>Disk usage</translation>
         </message>
         <message>
+            <source>Display mode</source>
+            <translation>Display mode</translation>
+        </message>
+        <message>
             <source>Display the original image beside recognition and translation results</source>
             <translation>Display the original image beside recognition and translation results</translation>
         </message>
@@ -2758,6 +2786,10 @@
             <translation>Enable MCP integration</translation>
         </message>
         <message>
+            <source>Enable Rack</source>
+            <translation>Enable Rack</translation>
+        </message>
+        <message>
             <source>Enable annotation mode when opening for editing</source>
             <translation>Enable annotation mode when opening for editing</translation>
         </message>
@@ -2828,6 +2860,10 @@
         <message>
             <source>Exit annotation mode before closing</source>
             <translation>Exit annotation mode before closing</translation>
+        </message>
+        <message>
+            <source>Expand or collapse the screenshot Rack</source>
+            <translation>Expand or collapse the screenshot Rack</translation>
         </message>
         <message>
             <source>Export</source>
@@ -3082,6 +3118,18 @@
             <translation>Highlight color presets</translation>
         </message>
         <message>
+            <source>History size</source>
+            <translation>History size</translation>
+        </message>
+        <message>
+            <source>Hotkey toggle</source>
+            <translation>Hotkey toggle</translation>
+        </message>
+        <message>
+            <source>Hover to expand</source>
+            <translation>Hover to expand</translation>
+        </message>
+        <message>
             <source>Icon</source>
             <translation>Icon</translation>
         </message>
@@ -3206,6 +3254,10 @@
             <translation>Keep closed windows available for restoration; disabling does not delete existing records</translation>
         </message>
         <message>
+            <source>Keep copied text and images in memory for this session only. Concealed content such as passwords is skipped</source>
+            <translation>Keep copied text and images in memory for this session only. Concealed content such as passwords is skipped</translation>
+        </message>
+        <message>
             <source>Keep group main buttons visible</source>
             <translation>Keep group main buttons visible</translation>
         </message>
@@ -3216,6 +3268,10 @@
         <message>
             <source>Keep screenshot annotations editable with undo and redo history. Pinned images retain the original layout without layout compaction</source>
             <translation>Keep screenshot annotations editable with undo and redo history. Pinned images retain the original layout without layout compaction</translation>
+        </message>
+        <message>
+            <source>Keep screenshots at the top edge of the screen</source>
+            <translation>Keep screenshots at the top edge of the screen</translation>
         </message>
         <message>
             <source>Keep screenshots available after the application closes</source>
@@ -3578,6 +3634,14 @@
             <translation>Off</translation>
         </message>
         <message>
+            <source>Off by default; never written to disk</source>
+            <translation>Off by default; never written to disk</translation>
+        </message>
+        <message>
+            <source>Older screenshots leave Rack when it is full</source>
+            <translation>Older screenshots leave Rack when it is full</translation>
+        </message>
+        <message>
             <source>Only when displayed</source>
             <translation>Only when displayed</translation>
         </message>
@@ -3620,6 +3684,10 @@
         <message>
             <source>Open selected text translation in a standalone window</source>
             <translation>Open selected text translation in a standalone window</translation>
+        </message>
+        <message>
+            <source>Open the clipboard history in Rack</source>
+            <translation>Open the clipboard history in Rack</translation>
         </message>
         <message>
             <source>Open the folder where recorded videos are saved</source>
@@ -3898,6 +3966,14 @@
             <translation>Quick selection modification</translation>
         </message>
         <message>
+            <source>Rack</source>
+            <translation>Rack</translation>
+        </message>
+        <message>
+            <source>Rack capacity</source>
+            <translation>Rack capacity</translation>
+        </message>
+        <message>
             <source>Rapidly drag a pinned window back and forth to show hidden pinned windows in the current group, or hide the other pinned windows when none are hidden</source>
             <translation>Rapidly drag a pinned window back and forth to show hidden pinned windows in the current group, or hide the other pinned windows when none are hidden</translation>
         </message>
@@ -3944,6 +4020,10 @@
         <message>
             <source>Recognized text and language tools</source>
             <translation>Recognized text and language tools</translation>
+        </message>
+        <message>
+            <source>Record clipboard history</source>
+            <translation>Record clipboard history</translation>
         </message>
         <message>
             <source>Record screen</source>
@@ -4342,6 +4422,10 @@
             <translation>Scrolling screenshot</translation>
         </message>
         <message>
+            <source>Search and clear history from the Clipboard tab in Rack</source>
+            <translation>Search and clear history from the Clipboard tab in Rack</translation>
+        </message>
+        <message>
             <source>Secondary target language</source>
             <translation>Secondary target language</translation>
         </message>
@@ -4580,6 +4664,10 @@
         <message>
             <source>Show border by default</source>
             <translation>Show border by default</translation>
+        </message>
+        <message>
+            <source>Show clipboard history</source>
+            <translation>Show clipboard history</translation>
         </message>
         <message>
             <source>Show cursor</source>
@@ -4980,6 +5068,10 @@
         <message>
             <source>Thumbnail mode</source>
             <translation>Thumbnail mode</translation>
+        </message>
+        <message>
+            <source>Toggle Rack</source>
+            <translation>Toggle Rack</translation>
         </message>
         <message>
             <source>Toggle always on top for the window under the cursor</source>

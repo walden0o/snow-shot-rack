@@ -732,6 +732,8 @@ constexpr SchemaString kSchemaStrings119[] = {u"quick.screenshot",
                                               u"quick.toggle-global-hotkeys",
                                               u"quick.toggle-global-mouse",
                                               u"quick.toggle-disable-on-focused-fullscreen-window",
+                                              u"quick.toggle-rack",
+                                              u"quick.toggle-clipboard-history",
                                               u"tray.window-grouping",
                                               u"tray.show-main-window",
                                               u"tray.restart-app",
@@ -767,6 +769,8 @@ constexpr SchemaString kSchemaStrings120[] = {u"quick.screenshot",
                                               u"quick.toggle-global-hotkeys",
                                               u"quick.toggle-global-mouse",
                                               u"quick.toggle-disable-on-focused-fullscreen-window",
+                                              u"quick.toggle-rack",
+                                              u"quick.toggle-clipboard-history",
                                               u"tray.window-grouping",
                                               u"tray.show-main-window",
                                               u"tray.restart-app",
@@ -848,7 +852,27 @@ constexpr ConfigurationIntegerRange kSchemaRange25{CaptureHistoryPolicy::Minimum
 constexpr ConfigurationIntegerRange kSchemaRange26{CaptureHistoryPolicy::MinimumDiskMiB,
                                                    CaptureHistoryPolicy::MaximumDiskMiB, 1};
 
+constexpr SchemaString kRackModeNames[] = {u"hover", u"hotkey", u"always"};
+constexpr SchemaAllowedValues kRackDisplayModes = {kRackModeNames, std::size(kRackModeNames)};
+constexpr SchemaString kRackLimitNames[] = {u"12", u"24", u"48"};
+constexpr SchemaAllowedValues kRackLimits = {kRackLimitNames, std::size(kRackLimitNames)};
+constexpr SchemaString kClipboardLimitNames[] = {u"20", u"50", u"100", u"200"};
+constexpr SchemaAllowedValues kClipboardLimits = {kClipboardLimitNames,
+                                                  std::size(kClipboardLimitNames)};
+
 constexpr SchemaEntryDescriptor kEntryDescriptors[] = {
+    {u"rack/enabled", booleanDefault(true), ConfigurationValueKind::Boolean},
+    {u"rack/auto_add_screenshots", booleanDefault(true), ConfigurationValueKind::Boolean},
+    {u"rack/display_mode", stringDefault(u"hover"), ConfigurationValueKind::String, nullptr,
+     &kRackDisplayModes},
+    {u"rack/limit", stringDefault(u"24"), ConfigurationValueKind::String, nullptr, &kRackLimits},
+    {u"global_shortcuts/toggle_rack", emptyArrayDefault(), ConfigurationValueKind::StringList,
+     nullptr, nullptr, 2},
+    {u"clipboard_history/enabled", booleanDefault(false), ConfigurationValueKind::Boolean},
+    {u"clipboard_history/limit", stringDefault(u"50"), ConfigurationValueKind::String, nullptr,
+     &kClipboardLimits},
+    {u"global_shortcuts/toggle_clipboard_history", emptyArrayDefault(),
+     ConfigurationValueKind::StringList, nullptr, nullptr, 2},
     {u"screenshot/stroke_color_presets", stringsDefault(kSchemaStrings0),
      ConfigurationValueKind::StringList},
     {u"screenshot/fill_color_presets", stringsDefault(kSchemaStrings1),

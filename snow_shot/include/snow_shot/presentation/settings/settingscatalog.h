@@ -64,6 +64,9 @@ enum class SettingsSelectSource {
 };
 
 enum class SettingsSelectBinding {
+    RackDisplayMode,
+    RackLimit,
+    ClipboardHistoryLimit,
     Theme,
     Language,
     AppFont,
@@ -130,6 +133,9 @@ struct SettingsSelectDefinition {
 };
 
 enum class SettingsSwitchBinding {
+    RackEnabled,
+    RackAutoAddScreenshots,
+    ClipboardHistoryEnabled,
     HistoryEnabled,
     PinnedHistoryEnabled,
     HistoryKeepPermanently,

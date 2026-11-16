@@ -19,6 +19,7 @@
     "SystemTrayController",
     "TitleBarWidget",
     "snow_shot::app::ApplicationController",
+    "snow_shot::presentation::RackWindow",
     "snow_shot::presentation::SystemTrayController"
   ],
   "settings": [

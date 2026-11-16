@@ -800,6 +800,23 @@ shortcuts::ShortcutBindingList ShortcutSettings::openCaptureHistory() const {
     return shortcutValue(QStringLiteral("global_shortcuts/open_capture_history"));
 }
 
+shortcuts::ShortcutBindingList ShortcutSettings::toggleRack() const {
+    return shortcutValue(QStringLiteral("global_shortcuts/toggle_rack"));
+}
+
+bool ShortcutSettings::setToggleRack(const shortcuts::ShortcutBindingList& bindings) const {
+    return setShortcutValue(QStringLiteral("global_shortcuts/toggle_rack"), bindings);
+}
+
+shortcuts::ShortcutBindingList ShortcutSettings::toggleClipboardHistory() const {
+    return shortcutValue(QStringLiteral("global_shortcuts/toggle_clipboard_history"));
+}
+
+bool ShortcutSettings::setToggleClipboardHistory(
+    const shortcuts::ShortcutBindingList& bindings) const {
+    return setShortcutValue(QStringLiteral("global_shortcuts/toggle_clipboard_history"), bindings);
+}
+
 bool ShortcutSettings::setOpenCaptureHistory(const shortcuts::ShortcutBindingList& bindings) const {
     return setShortcutValue(QStringLiteral("global_shortcuts/open_capture_history"), bindings);
 }

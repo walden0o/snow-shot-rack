@@ -199,6 +199,10 @@ class ShortcutSettings final {
     [[nodiscard]] shortcuts::ShortcutBindingList openScreenRecordingFolder() const;
     bool setOpenScreenRecordingFolder(const shortcuts::ShortcutBindingList& bindings) const;
     [[nodiscard]] shortcuts::ShortcutBindingList openCaptureHistory() const;
+    [[nodiscard]] shortcuts::ShortcutBindingList toggleRack() const;
+    bool setToggleRack(const shortcuts::ShortcutBindingList& bindings) const;
+    [[nodiscard]] shortcuts::ShortcutBindingList toggleClipboardHistory() const;
+    bool setToggleClipboardHistory(const shortcuts::ShortcutBindingList& bindings) const;
     bool setOpenCaptureHistory(const shortcuts::ShortcutBindingList& bindings) const;
     [[nodiscard]] shortcuts::ShortcutBindingList switchWindowGroup() const;
     bool setSwitchWindowGroup(const shortcuts::ShortcutBindingList& bindings) const;

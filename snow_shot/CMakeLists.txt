@@ -156,6 +156,20 @@ if(SNOW_SHOT_BUILD_TESTS)
     target_link_libraries(snow-shot-recording-recovery-tests PRIVATE Qt6::Core)
     add_test(NAME snow-shot-recording-recovery-tests COMMAND snow-shot-recording-recovery-tests)
     set_tests_properties(snow-shot-recording-recovery-tests PROPERTIES LABELS "unit" TIMEOUT 15)
+    add_executable(snow-shot-rack-content-model-tests tests/rack_content_model_tests.cpp
+        include/snow_shot/presentation/rackcontentmodel.h
+        src/presentation/services/rackcontentmodel.cpp)
+    target_include_directories(snow-shot-rack-content-model-tests PRIVATE include)
+    target_link_libraries(snow-shot-rack-content-model-tests PRIVATE Qt6::Gui Qt6::Test)
+    add_test(NAME snow-shot-rack-content-model-tests COMMAND snow-shot-rack-content-model-tests)
+    set_tests_properties(snow-shot-rack-content-model-tests PROPERTIES LABELS "unit" TIMEOUT 30)
+    add_executable(snow-shot-rack-hover-policy-tests tests/rack_hover_policy_tests.cpp
+        include/snow_shot/presentation/rackhoverpolicy.h
+        src/presentation/services/rackhoverpolicy.cpp)
+    target_include_directories(snow-shot-rack-hover-policy-tests PRIVATE include)
+    target_link_libraries(snow-shot-rack-hover-policy-tests PRIVATE Qt6::Core)
+    add_test(NAME snow-shot-rack-hover-policy-tests COMMAND snow-shot-rack-hover-policy-tests)
+    set_tests_properties(snow-shot-rack-hover-policy-tests PROPERTIES LABELS "unit" TIMEOUT 15)
 endif()
 
 add_library(snow_shot_canvas_status_readout STATIC
@@ -1932,6 +1946,10 @@ set(PROJECT_HEADERS
     include/snow_shot/presentation/styles/buttonborder.h
     include/snow_shot/presentation/styles/themecolorscheme.h
     include/snow_shot/presentation/floatingtoolbarcontroller.h
+    include/snow_shot/presentation/rackcontentmodel.h
+    include/snow_shot/presentation/rackcontroller.h
+    include/snow_shot/presentation/rackhoverpolicy.h
+    include/snow_shot/presentation/rackwindow.h
     include/snow_shot/presentation/systemtraycontroller.h
 )
 
@@ -2177,6 +2195,10 @@ set(PROJECT_CXX_SOURCES
     src/presentation/recording/recordingaudiogainpopover.h
     src/presentation/tools/screenshottoolpalettehost.cpp
     src/presentation/toolbar/floatingtoolbarcontroller.cpp
+    src/presentation/services/rackcontentmodel.cpp
+    src/presentation/services/rackcontroller.cpp
+    src/presentation/services/rackhoverpolicy.cpp
+    src/presentation/components/rackwindow.cpp
     src/presentation/toolbar/screenshottoolbarwindow.cpp
     src/presentation/recording/screenrecordingareawindow.cpp
     src/presentation/recording/recordingtrimtoolbar.cpp
