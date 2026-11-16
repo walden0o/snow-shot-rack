@@ -3,6 +3,7 @@
 #define SNOW_SHOT_PRESENTATION_RACKWINDOW_H
 
 #include "snow_shot/presentation/rackcontentmodel.h"
+#include "snow_shot/presentation/rackhoverpolicy.h"
 #include <QPointer>
 #include <QPropertyAnimation>
 #include <QSet>
@@ -50,6 +51,7 @@ class RackWindow final : public QWidget {
 
   private:
     void dismiss();
+    [[nodiscard]] RackInteractionState interactionState() const;
     void refresh();
     void retranslateUi();
     void applyTheme();

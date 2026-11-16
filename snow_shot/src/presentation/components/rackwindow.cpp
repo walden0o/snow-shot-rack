@@ -2,6 +2,7 @@
 #include "snow_shot/presentation/rackwindow.h"
 
 #include "snow_shot/platform/screenshotnative.h"
+#include "snow_shot/presentation/rackhoverpolicy.h"
 #include "snow_shot/presentation/styles/thememanager.h"
 #include "snow_shot/storage/clipboardfilecache.h"
 #include "widgets/button.h"
@@ -111,10 +112,10 @@ RackWindow::RackWindow(RackContentModel& model, RackContentModel& clipboardModel
     });
     connect(list, &QWidget::customContextMenuRequested, this, &RackWindow::contextMenu);
     connect(m_settings, &QAbstractButton::clicked, this, [this] {
-        collapse();
+        dismiss();
         emit settingsRequested();
     });
-    connect(m_close, &QAbstractButton::clicked, this, &RackWindow::collapse);
+    connect(m_close, &QAbstractButton::clicked, this, &RackWindow::dismiss);
     connect(&m_model, &RackContentModel::changed, this, &RackWindow::refresh);
     connect(&m_clipboardModel, &RackContentModel::changed, this, &RackWindow::refresh);
     connect(m_screenshotsTab, &QAbstractButton::clicked, this,
@@ -129,17 +130,17 @@ RackWindow::RackWindow(RackContentModel& model, RackContentModel& clipboardModel
         m_animation.stop();
         setGeometry(targetGeometry(m_expanded));
     });
-    m_animation.setDuration(170);
+    m_animation.setDuration(RackAnimationMs);
     m_animation.setEasingCurve(QEasingCurve::OutCubic);
     connect(&m_animation, &QPropertyAnimation::finished, this,
             [this] { m_body->setVisible(m_expanded); });
     m_closeTimer.setSingleShot(true);
-    m_closeTimer.setInterval(200);
+    m_closeTimer.setInterval(RackCollapseDelayMs);
     connect(&m_closeTimer, &QTimer::timeout, this, [this] {
-        if (!interacting() && !pointerInHoverArea(QCursor::pos()))
+        if (rackCollapseAfterDelay(pointerInHoverArea(QCursor::pos()), interacting()))
             collapse();
     });
-    m_pointerTimer.setInterval(50);
+    m_pointerTimer.setInterval(RackPointerPollMs);
     connect(&m_pointerTimer, &QTimer::timeout, this, &RackWindow::trackPointer);
     m_pointerTimer.start();
     setView(View::Screenshots);
@@ -241,10 +242,12 @@ void RackWindow::expand(bool activate) {
 }
 
 void RackWindow::dismiss() {
-    // An explicit close wins over search focus, which otherwise holds the panel open.
+    if (rackCollapseBlocked(interactionState(), RackCollapseTrigger::Explicit))
+        return;
     if (m_search->hasFocus())
         m_search->clearFocus();
-    collapse();
+    m_closeTimer.stop();
+    animate(false);
 }
 
 void RackWindow::collapse() {
@@ -259,25 +262,23 @@ bool RackWindow::expanded() const {
 }
 
 bool RackWindow::interacting() const {
-    return m_interactionDepth > 0 || QApplication::activePopupWidget() ||
-           QApplication::activeModalWidget() || (isActiveWindow() && m_search->hasFocus());
+    return rackCollapseBlocked(interactionState(), RackCollapseTrigger::Automatic);
+}
+
+RackInteractionState RackWindow::interactionState() const {
+    return {.contentInteraction = m_interactionDepth > 0,
+            .popupOpen = QApplication::activePopupWidget() != nullptr,
+            .modalOpen = QApplication::activeModalWidget() != nullptr,
+            .searchFocused = isActiveWindow() && m_search->hasFocus()};
 }
 
 QRect RackWindow::targetGeometry(bool expanded) const {
     const QRect screen = m_screen ? m_screen->geometry() : QRect(0, 0, 1024, 768);
-    // Keep the rack below the macOS menu bar so the collapsed handle stays visible.
-    const int top = m_screen ? m_screen->availableGeometry().top() : screen.top();
-    const int width = std::min(660, screen.width() - 24);
-    return expanded ? QRect(screen.right() - width - 12, top, width, 260)
-                    : QRect(screen.right() - 156, top, 112, 8);
+    return rackTargetGeometry(screen, m_screen ? m_screen->availableGeometry() : screen, expanded);
 }
 
 bool RackWindow::pointerInHoverArea(const QPoint& cursor) const {
-    // Include the menu bar band above the rack so resting on the top edge keeps it open.
-    QRect area = geometry();
-    if (m_screen)
-        area.setTop(m_screen->geometry().top());
-    return area.contains(cursor);
+    return rackInHoverArea(geometry(), m_screen ? m_screen->geometry() : geometry(), cursor);
 }
 
 void RackWindow::animate(bool expanded) {
@@ -301,21 +302,28 @@ void RackWindow::trackPointer() {
     if (!isVisible() || !m_captureSources.isEmpty())
         return;
     const QPoint cursor = QCursor::pos();
-    if (!m_expanded && m_mode == QStringLiteral("hover")) {
-        QScreen* screen = QGuiApplication::screenAt(cursor);
-        if (screen && cursor.y() >= screen->geometry().top() &&
-            cursor.y() <= screen->availableGeometry().top() + 8 &&
-            cursor.x() >= screen->geometry().right() - 180 &&
-            cursor.x() <= screen->geometry().right() - 20) {
-            m_screen = screen;
-            expand();
-        }
-    }
-    if (m_expanded && m_mode == QStringLiteral("hover")) {
-        if (pointerInHoverArea(cursor) || interacting())
-            m_closeTimer.stop();
-        else if (!m_closeTimer.isActive())
-            m_closeTimer.start();
+    QScreen* hovered = m_expanded ? nullptr : QGuiApplication::screenAt(cursor);
+    const RackPointerState state{
+        .mode = rackDisplayModeFromName(m_mode),
+        .expanded = m_expanded,
+        .inHotZone =
+            hovered && rackInHotZone(hovered->geometry(), hovered->availableGeometry(), cursor),
+        .inHoverArea = m_expanded && pointerInHoverArea(cursor),
+        .interacting = interacting(),
+        .collapsePending = m_closeTimer.isActive()};
+    switch (rackPointerAction(state)) {
+    case RackPointerAction::Expand:
+        m_screen = hovered;
+        expand();
+        break;
+    case RackPointerAction::CancelCollapse:
+        m_closeTimer.stop();
+        break;
+    case RackPointerAction::ScheduleCollapse:
+        m_closeTimer.start();
+        break;
+    case RackPointerAction::None:
+        break;
     }
 }
 
