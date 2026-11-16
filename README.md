@@ -1,3 +1,13 @@
+> [!IMPORTANT]
+> **About this fork**
+>
+> This repository is an independent, derivative fork of [mg-chao/snow-shot](https://github.com/mg-chao/snow-shot).
+> It adds a **Rack** (a top-edge screenshot shelf) and a **clipboard history** module.
+> It is **not** the official Snow Shot repository and is not affiliated with or endorsed by the upstream author.
+> It remains licensed under **GPL-3.0-or-later**, the same as upstream.
+> For the original project, official releases, and issue tracker, see [mg-chao/snow-shot](https://github.com/mg-chao/snow-shot).
+> The website, download, and issue links below are kept from upstream and point to the official project.
+
 <div align="center">
   <a href="https://snowshot.top">
     <img src="docs/imgs/app-icon.png" width="112" height="112" alt="Snow Shot logo">
@@ -57,6 +67,16 @@
 Core capture, annotation, recording, standard OCR, and QR recognition run on your device.
 Translation, advanced recognition, AI conversion, and cloud uploads use the services you choose.
 MCP is optional and off by default. See the [privacy policy](docs/snow-shot-privacy-policy.en.md).
+
+## 🧺 What this fork adds
+
+The features below exist only in this fork; everything else matches upstream Snow Shot.
+
+- **Rack (top-edge screenshot shelf).** A thin handle sits below the macOS menu bar at the top-right of the screen. Hover the top edge to slide the shelf open; it collapses shortly after the pointer leaves, but stays open while you drag, use a menu or dialog, or type in its search field. New captures are added automatically (this relies on capture history, which is on by default). Click a card to copy the image, drag it out to Finder or another app, or right-click to open or remove it. Display modes: hover, hotkey toggle, or always visible.
+- **Clipboard history.** Off by default. When enabled, text and images copied in any app are kept in memory for the current session only and are never written to disk. Content marked as concealed or transient (for example, by password managers) is skipped. You can search the history, re-copy an item, clear it, set a limit, and open it from the Rack or with a global shortcut.
+- **Settings and languages.** Both modules have options under Settings → Tray & floating toolbar and new global shortcuts (Toggle Rack, Show clipboard history). English, Simplified Chinese, and Traditional Chinese are supported.
+
+The Rack has been verified on macOS (Apple silicon). It is not yet tuned for Windows or multiple displays.
 
 <a id="download"></a>
 
