@@ -2,6 +2,7 @@
 #include "snow_shot/presentation/rackcontentmodel.h"
 #include <QGuiApplication>
 #include <QImage>
+#include <QMimeData>
 #include <QSignalSpy>
 #include <cstdio>
 #include <cstdlib>
@@ -67,6 +68,35 @@ void searchesRemovesAndClears() {
     model.clear();
     require(model.entries().isEmpty(), "clear empties the session history");
 }
+
+void honorsClipboardHistoryExclusions() {
+    using snow_shot::presentation::clipboardExcludedFromHistory;
+    QMimeData plain;
+    plain.setText(QStringLiteral("visible"));
+    require(!clipboardExcludedFromHistory(plain), "ordinary clipboard content is recorded");
+
+    const QString windowsFormat = QStringLiteral("application/x-qt-windows-mime;value=\"%1\"");
+    QMimeData excluded;
+    excluded.setText(QStringLiteral("secret"));
+    excluded.setData(windowsFormat.arg(u"ExcludeClipboardContentFromMonitorProcessing"), {});
+    require(clipboardExcludedFromHistory(excluded),
+            "Windows monitor exclusion keeps content out of history");
+
+    QMimeData noHistory;
+    noHistory.setText(QStringLiteral("secret"));
+    noHistory.setData(windowsFormat.arg(u"CanIncludeInClipboardHistory"), QByteArray(4, '\0'));
+    require(clipboardExcludedFromHistory(noHistory),
+            "CanIncludeInClipboardHistory=0 keeps content out of history");
+    noHistory.setData(windowsFormat.arg(u"CanIncludeInClipboardHistory"),
+                      QByteArray("\x01\0\0\0", 4));
+    require(!clipboardExcludedFromHistory(noHistory),
+            "CanIncludeInClipboardHistory=1 allows recording");
+
+    QMimeData kdeSecret;
+    kdeSecret.setText(QStringLiteral("secret"));
+    kdeSecret.setData(QStringLiteral("x-kde-passwordManagerHint"), "secret");
+    require(clipboardExcludedFromHistory(kdeSecret), "password manager hints are honored");
+}
 } // namespace
 
 int main(int argc, char** argv) {
@@ -75,5 +105,6 @@ int main(int argc, char** argv) {
     addsNewestFirstAndDeduplicates();
     enforcesLimits();
     searchesRemovesAndClears();
+    honorsClipboardHistoryExclusions();
     return 0;
 }

@@ -126,7 +126,7 @@ class RackController::Impl {
             return;
 #endif
         const QMimeData* data = QApplication::clipboard()->mimeData();
-        if (data == nullptr)
+        if (data == nullptr || clipboardExcludedFromHistory(*data))
             return;
         if (data->hasImage())
             clipboardModel.add({}, qvariant_cast<QImage>(data->imageData()));

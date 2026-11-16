@@ -2,10 +2,29 @@
 #include "snow_shot/presentation/rackcontentmodel.h"
 
 #include <QCryptographicHash>
+#include <QMimeData>
 #include <QUuid>
 #include <algorithm>
 
 namespace snow_shot::presentation {
+bool clipboardExcludedFromHistory(const QMimeData& data) {
+    const auto formats = data.formats();
+    for (const QString& format : formats) {
+        // Windows registered formats surface as application/x-qt-windows-mime;value="...".
+        if (format.contains(QStringLiteral("ExcludeClipboardContentFromMonitorProcessing")))
+            return true;
+        if (format.contains(QStringLiteral("CanIncludeInClipboardHistory"))) {
+            const QByteArray value = data.data(format);
+            if (!value.isEmpty() && value.count('\0') == value.size())
+                return true;
+        }
+        if (format == QStringLiteral("x-kde-passwordManagerHint") &&
+            data.data(format) == QByteArrayLiteral("secret"))
+            return true;
+    }
+    return false;
+}
+
 qint64 RackEntry::byteSize() const {
     return image.sizeInBytes() + text.size() * qint64(sizeof(QChar));
 }

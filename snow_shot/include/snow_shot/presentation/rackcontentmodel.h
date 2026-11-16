@@ -7,7 +7,12 @@
 #include <QObject>
 #include <QVector>
 
+class QMimeData;
+
 namespace snow_shot::presentation {
+// True when the producer marked the content as off-limits to clipboard history tools.
+[[nodiscard]] bool clipboardExcludedFromHistory(const QMimeData& data);
+
 struct RackEntry {
     QString id;
     QString text;
