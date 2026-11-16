@@ -3,6 +3,9 @@
 
 #include "racklist_p.h"
 #include "snow_shot/platform/screenshotnative.h"
+#ifdef Q_OS_MACOS
+#include "snow_shot/platform/macos/applicationactivation.h"
+#endif
 #include "snow_shot/presentation/rackhoverpolicy.h"
 #include "snow_shot/presentation/styles/thememanager.h"
 #include "snow_shot/storage/clipboardfilecache.h"
@@ -217,7 +220,6 @@ RackWindow::RackWindow(RackContentModel& model, RackContentModel& clipboardModel
     });
     m_pointerTimer.setInterval(RackPointerPollMs);
     connect(&m_pointerTimer, &QTimer::timeout, this, &RackWindow::trackPointer);
-    m_pointerTimer.start();
     setView(View::Screenshots);
     applyTheme();
 #ifdef Q_OS_MACOS
@@ -265,6 +267,11 @@ RackContentModel& RackWindow::currentModel() const {
 
 void RackWindow::setDisplayMode(const QString& mode) {
     m_mode = mode;
+    // Pointer polling drives hover-mode expansion only; other modes stay idle.
+    if (rackDisplayModeFromName(mode) == RackDisplayMode::Hover)
+        m_pointerTimer.start();
+    else
+        m_pointerTimer.stop();
     if (mode == QStringLiteral("always"))
         expand();
     else
@@ -310,8 +317,14 @@ void RackWindow::expand(bool activate) {
     platform::configureRackWindow(this);
 #endif
     if (activate) {
+#ifdef Q_OS_MACOS
+        // A global shortcut can open the rack while Snow Shot is backgrounded;
+        // plain Qt calls cannot take focus from another application.
+        platform::macos::activateWindow(this);
+#else
         raise();
         activateWindow();
+#endif
         m_list->setFocus();
     }
 }
@@ -442,18 +455,29 @@ void RackWindow::refresh() {
                                           .arg(value.image.height())
                                     : time);
             item->setToolTip(tr("Click to copy image; drag to share"));
-            item->setIcon(QPixmap::fromImage(
-                value.image.scaled(288, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+            // Clipboard rows render a 48x32 icon; only the screenshots tab needs
+            // the 2x card thumbnail its delegate requests.
+            const QSize thumbnail = clipboard ? QSize(96, 64) : QSize(288, 200);
+            item->setIcon(QPixmap::fromImage(value.image.scaled(
+                thumbnail.width(), thumbnail.height(), Qt::KeepAspectRatio,
+                Qt::SmoothTransformation)));
         }
         if (value.id == selected)
             m_list->setCurrentItem(item);
     }
-    if (clipboard)
-        m_empty->setText(m_clipboardEnabled
-                             ? (m_search->text().isEmpty()
-                                    ? tr("Copied text and images appear here")
-                                    : tr("No matching clipboard items"))
-                             : tr("Clipboard history is off. Turn it on in Settings"));
+    if (clipboard && !m_clipboardEnabled)
+        m_empty->setText(tr("Clipboard history is off. Turn it on in Settings"));
+    else if (clipboard && !m_search->text().isEmpty()) {
+        // Search matches text only; say so instead of letting images silently vanish.
+        const int unsearchableImages = static_cast<int>(std::count_if(
+            m_clipboardModel.entries().cbegin(), m_clipboardModel.entries().cend(),
+            [](const RackEntry& entry) { return !entry.image.isNull(); }));
+        m_empty->setText(unsearchableImages > 0
+                             ? tr("No matching text; %1 image(s) are not searchable")
+                                   .arg(unsearchableImages)
+                             : tr("No matching clipboard items"));
+    } else if (clipboard)
+        m_empty->setText(tr("Copied text and images appear here"));
     else
         m_empty->setText(tr("Your next screenshot will appear here"));
     m_empty->setVisible(m_list->count() == 0);
