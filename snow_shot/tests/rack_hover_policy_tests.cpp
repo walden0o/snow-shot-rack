@@ -151,6 +151,15 @@ struct Simulation {
     }
 };
 
+void decidesCloseDisposition() {
+    require(rackCloseDisposition(RackDisplayMode::Always) == RackCloseDisposition::RestoreAlways,
+            "always mode restores the panel after an accepted close");
+    require(rackCloseDisposition(RackDisplayMode::Hover) == RackCloseDisposition::Dismiss,
+            "hover mode dismisses on close");
+    require(rackCloseDisposition(RackDisplayMode::Hotkey) == RackCloseDisposition::Dismiss,
+            "hotkey mode dismisses on close");
+}
+
 void simulatesHoverSession() {
     Simulation rack;
     const QPoint topEdge(Screen.right() - 100, 0);
@@ -191,6 +200,7 @@ int main() {
     hoverAreaIncludesMenuBarBand();
     interactionsBlockCollapse();
     decidesPointerActions();
+    decidesCloseDisposition();
     simulatesHoverSession();
     return 0;
 }
