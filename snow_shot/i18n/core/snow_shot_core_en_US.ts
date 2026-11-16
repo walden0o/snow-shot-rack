@@ -1044,6 +1044,10 @@ so every moment on screen can be expressed clearly and shared easily</translatio
             <translation>No matching clipboard items</translation>
         </message>
         <message>
+            <source>No matching text; %1 image(s) are not searchable</source>
+            <translation>No matching text; %1 image(s) are not searchable</translation>
+        </message>
+        <message>
             <source>Open image</source>
             <translation>Open image</translation>
         </message>

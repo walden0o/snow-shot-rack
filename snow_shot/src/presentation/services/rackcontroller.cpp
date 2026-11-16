@@ -16,6 +16,7 @@
 #include <QTimer>
 #include <chrono>
 #include <future>
+#include <utility>
 
 namespace snow_shot::presentation {
 namespace {
@@ -156,6 +157,7 @@ class RackController::Impl {
             return;
         const auto record = queue.dequeue();
         auto* repository = &storage::ApplicationStorage::instance().captureHistory();
+        loadingId = record.id;
         loadingGeneration = generation;
         loading = std::async(std::launch::async, [repository, record] {
             const auto image = repository->loadResultImagePreservingRecord(record);
@@ -169,9 +171,21 @@ class RackController::Impl {
             loading.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
             return;
         QImage image = loading.get();
+        const QString attemptedId = std::exchange(loadingId, {});
         completion.stop();
-        if (enabled && automatic && loadingGeneration == generation && !image.isNull())
-            model.add({}, std::move(image));
+        if (!image.isNull()) {
+            if (enabled && automatic && loadingGeneration == generation) {
+                // An entry the model rejects (for example, oversized) can never be
+                // added; mark it seen so history changes do not retry it forever.
+                if (!model.add({}, std::move(image)))
+                    seen.insert(attemptedId);
+            }
+        } else {
+            // A transient read failure (busy file, storage switching) should not
+            // permanently drop the capture; forget it so the next history change
+            // queues it again.
+            seen.remove(attemptedId);
+        }
         loadNext();
     }
 
@@ -195,6 +209,7 @@ class RackController::Impl {
     QSet<QString> seen;
     QQueue<storage::CaptureHistoryRecord> queue;
     std::future<QImage> loading;
+    QString loadingId;
     QTimer completion;
     QTimer clipboardPoll;
     quint64 generation = 0;

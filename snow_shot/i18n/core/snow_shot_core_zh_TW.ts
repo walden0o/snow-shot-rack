@@ -1044,6 +1044,10 @@ so every moment on screen can be expressed clearly and shared easily</source>
             <translation>沒有符合的剪貼簿項目</translation>
         </message>
         <message>
+            <source>No matching text; %1 image(s) are not searchable</source>
+            <translation>沒有符合的文字;%1 張影像不參與搜尋</translation>
+        </message>
+        <message>
             <source>Open image</source>
             <translation>開啟影像</translation>
         </message>
