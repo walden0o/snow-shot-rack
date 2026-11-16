@@ -604,7 +604,11 @@ void RackWindow::closeEvent(QCloseEvent* event) {
     // The rack is always-on: closing only dismisses the panel. The event
     // must still be accepted — ignoring it vetoes QApplication::quit.
     event->accept();
-    dismiss();
+    // In always mode a WM close must not strand the panel; re-expand it.
+    if (m_mode == QStringLiteral("always"))
+        expand();
+    else
+        dismiss();
 }
 
 void RackWindow::mousePressEvent(QMouseEvent* event) {
